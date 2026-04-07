@@ -43,6 +43,22 @@
   color: #555555;
 }
 
+.link-row {
+  border-bottom: none;
+  padding: 24rpx 0;
+}
+
+.link-row:active {
+  opacity: 0.75;
+}
+
+.row-arrow {
+  font-size: 40rpx;
+  color: #cccccc;
+  line-height: 1;
+  font-weight: 300;
+}
+
 .picker-val {
   font-size: 26rpx;
   color: #E8A0BF;

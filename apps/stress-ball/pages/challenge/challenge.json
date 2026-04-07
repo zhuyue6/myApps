@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "收集图鉴",
+  "navigationBarTitleText": "力度挑战",
   "usingComponents": {
     "custom-tab-bar": "/components/custom-tab-bar/index"
   }

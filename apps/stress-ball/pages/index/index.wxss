@@ -1,10 +1,19 @@
+/* ═══════════════════════════════════════════════════
+   解压球主玩耍页样式
+   ─ 3D 软胶球、力度光晕、波纹、挑战模式 UI
+   ═══════════════════════════════════════════════════ */
+
+/* ── 页面基础 ──────────────────────────────────────────── */
 .page {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   padding-bottom: 160rpx;
 }
 
+/* ── 粒子背景 ─────────────────────────────────────────── */
 .particles {
   position: absolute;
   inset: 0;
@@ -19,43 +28,15 @@
   border-radius: 50%;
   animation: twinkle 3s ease-in-out infinite;
 }
-
-.stars .s1 {
-  top: 12%;
-  left: 20%;
-  animation-delay: 0s;
-}
-.stars .s2 {
-  top: 22%;
-  right: 18%;
-  animation-delay: 0.5s;
-}
-.stars .s3 {
-  top: 45%;
-  left: 12%;
-  animation-delay: 1s;
-}
-.stars .s4 {
-  bottom: 35%;
-  right: 25%;
-  animation-delay: 1.2s;
-}
-.stars .s5 {
-  top: 60%;
-  right: 40%;
-  animation-delay: 0.3s;
-}
+.stars .s1 { top: 12%; left: 20%; animation-delay: 0s; }
+.stars .s2 { top: 22%; right: 18%; animation-delay: 0.5s; }
+.stars .s3 { top: 45%; left: 12%; animation-delay: 1s; }
+.stars .s4 { bottom: 35%; right: 25%; animation-delay: 1.2s; }
+.stars .s5 { top: 60%; right: 40%; animation-delay: 0.3s; }
 
 @keyframes twinkle {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(0.9);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
+  0%, 100% { opacity: 0.35; transform: scale(0.9); }
+  50%       { opacity: 1;    transform: scale(1.2); }
 }
 
 .curtain {
@@ -68,63 +49,141 @@
   );
 }
 
-.top-bar {
-  padding: 24rpx 32rpx 0;
-  display: flex;
-  justify-content: flex-end;
+/* ── 挑战模式状态栏 ────────────────────────────────────── */
+.challenge-header {
+  margin: 16rpx 24rpx 0;
+  padding: 24rpx 28rpx 20rpx;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 22rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
 }
 
-.coin-pill {
+.ch-meta {
   display: flex;
   align-items: center;
-  gap: 8rpx;
-  padding: 12rpx 24rpx;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 999rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  gap: 10rpx;
+  margin-bottom: 18rpx;
 }
-
-.coin-icon {
+.ch-icon { font-size: 30rpx; }
+.ch-level-text {
   font-size: 28rpx;
+  font-weight: 700;
+  color: #444;
 }
-
-.coin-num {
-  font-size: 30rpx;
+.ch-divider { flex: 1; }
+.ch-streak {
+  font-size: 26rpx;
   font-weight: 600;
-  color: #C77B9E;
+  color: #9b70cc;
 }
-
-.coin-label {
+.ch-best {
   font-size: 22rpx;
-  color: #888888;
+  color: #aaa;
+  margin-left: 8rpx;
 }
 
-.hint-banner {
-  margin: 16rpx 32rpx 0;
-  padding: 20rpx 24rpx;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 16rpx;
-  font-size: 24rpx;
-  color: #666666;
-  line-height: 1.5;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.06);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12rpx;
+.ch-label {
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 12rpx;
+  letter-spacing: 1rpx;
 }
 
-.hint-close {
-  color: #E8A0BF;
-  font-weight: 600;
+/* 压力段落条：8 档，4×2 网格 */
+.pressure-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6rpx 8rpx;
+  margin-bottom: 18rpx;
 }
 
-.stage {
+.pres-seg {
+  min-width: 0;
+  height: 52rpx;
+  border-radius: 10rpx;
+  background: #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 52vh;
-  padding: 32rpx;
+  border: 3rpx solid transparent;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.pres-label {
+  font-size: 20rpx;
+  color: #bbb;
+  font-weight: 500;
+  transition: color 200ms;
+  white-space: nowrap;
+}
+
+/* 激活状态：8 档由浅蓝过渡到紫 */
+.pres-seg.seg-active.seg-v1 { background: rgba(176, 224, 255, 0.88); }
+.pres-seg.seg-active.seg-v2 { background: rgba(135, 206, 250, 0.88); }
+.pres-seg.seg-active.seg-v3 { background: rgba(100, 180, 255, 0.88); }
+.pres-seg.seg-active.seg-v4 { background: rgba(30, 144, 255, 0.88); }
+.pres-seg.seg-active.seg-v5 { background: rgba(0, 100, 215, 0.88); }
+.pres-seg.seg-active.seg-v6 { background: rgba(0, 55, 190, 0.88); }
+.pres-seg.seg-active.seg-v7 { background: rgba(90, 50, 180, 0.88); }
+.pres-seg.seg-active.seg-v8 { background: rgba(120, 50, 200, 0.9); }
+.pres-seg.seg-active .pres-label { color: #fff; font-weight: 600; }
+
+/* 目标段落边框高亮 */
+.pres-seg.seg-target {
+  border-color: #9b70cc;
+  border-width: 3rpx;
+}
+.pres-seg.seg-target .pres-label { color: #9b70cc; font-weight: 700; }
+.pres-seg.seg-target.seg-active .pres-label { color: #fff; }
+
+/* 命中目标时闪烁白光 */
+@keyframes segFlash {
+  0%, 100% { background: rgba(120, 50, 200, 0.88); }
+  50%       { background: rgba(255, 255, 255, 0.95); border-color: #fff; }
+}
+.pres-seg.seg-flash {
+  animation: segFlash 0.35s ease-in-out infinite;
+}
+
+/* 结果颜色反馈 */
+.pres-seg.seg-perfect { background: #ffd700 !important; border-color: #ffa500 !important; }
+.pres-seg.seg-perfect .pres-label { color: #6b4c00 !important; }
+.pres-seg.seg-good    { background: #90ee90 !important; border-color: #52b880 !important; }
+.pres-seg.seg-good .pres-label    { color: #1a5c1a !important; }
+
+/* 倒计时进度条 */
+.countdown-wrap {
+  height: 14rpx;
+  border-radius: 999rpx;
+  background: #eee;
+  position: relative;
+  overflow: visible;
+}
+.countdown-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #c4a0e8, #e8a0bf);
+  transition: width 80ms linear;
+  min-width: 2rpx;
+}
+.countdown-sec {
+  position: absolute;
+  right: 0;
+  top: -32rpx;
+  font-size: 22rpx;
+  color: #999;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 主舞台 ──────────────────────────────────────────────── */
+.stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46vh;
+  padding: 20rpx;
 }
 
 .squish-wrap {
@@ -134,109 +193,244 @@
   will-change: transform;
 }
 
-.squish {
+/* 球体容器：为光晕和波纹提供定位上下文 */
+.ball-stage {
+  position: relative;
+  width: 430rpx;
+  height: 430rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── 力度光晕环 ───────────────────────────────────────────── */
+.halo-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 10rpx;
+  /* 尺寸和颜色通过内联样式动态设置 */
+  transition: width 180ms ease,
+              height 180ms ease,
+              border-color 180ms ease,
+              box-shadow 180ms ease;
+  pointer-events: none;
+}
+
+/* 命中目标：光晕闪烁白光 */
+@keyframes haloFlashAnim {
+  0%, 100% { opacity: 1; }
+  50%       {
+    opacity: 0.4;
+    border-color: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.9) !important;
+  }
+}
+.halo-ring.halo-flash {
+  animation: haloFlashAnim 0.35s ease-in-out infinite;
+}
+
+/* ── 超重按压波纹效果 ─────────────────────────────────────── */
+@keyframes waveExpand {
+  0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+}
+.wave-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 280rpx;
   height: 280rpx;
   border-radius: 50%;
+  border: 6rpx solid rgba(200, 80, 120, 0.65);
+  animation: waveExpand 0.9s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+  pointer-events: none;
+}
+.wave-ring2 {
+  border-color: rgba(150, 60, 200, 0.45);
+  animation-delay: 0.22s;
+  animation-duration: 1.0s;
+  opacity: 0;
+}
+
+/* ── 篮球贴图球体：形变由 JS 连续插值（squishStyle） ─────────── */
+.stress-ball {
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 50%;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+  background: transparent;
+  transition: transform 72ms linear, border-radius 72ms linear;
+  will-change: transform, border-radius;
+}
+
+.stress-ball.is-pressing {
+  transition: transform 48ms linear, border-radius 48ms linear;
+}
+
+.basketball-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 释放回弹：8 档对应由快到慢的弹性时长 */
+.stress-ball.releasing-1 {
+  transition: transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              border-radius 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.stress-ball.releasing-2 {
+  transition: transform 440ms cubic-bezier(0.33, 1.58, 0.63, 1),
+              border-radius 440ms cubic-bezier(0.33, 1.58, 0.63, 1);
+}
+.stress-ball.releasing-3 {
+  transition: transform 480ms cubic-bezier(0.32, 1.6, 0.62, 1),
+              border-radius 480ms cubic-bezier(0.32, 1.6, 0.62, 1);
+}
+.stress-ball.releasing-4 {
+  transition: transform 520ms cubic-bezier(0.30, 1.64, 0.60, 1),
+              border-radius 520ms cubic-bezier(0.30, 1.64, 0.60, 1);
+}
+.stress-ball.releasing-5 {
+  transition: transform 580ms cubic-bezier(0.28, 1.68, 0.58, 1),
+              border-radius 580ms cubic-bezier(0.28, 1.68, 0.58, 1);
+}
+.stress-ball.releasing-6 {
+  transition: transform 640ms cubic-bezier(0.26, 1.74, 0.55, 1),
+              border-radius 640ms cubic-bezier(0.26, 1.74, 0.55, 1);
+}
+.stress-ball.releasing-7 {
+  transition: transform 720ms cubic-bezier(0.22, 1.82, 0.50, 1),
+              border-radius 720ms cubic-bezier(0.22, 1.82, 0.50, 1);
+}
+.stress-ball.releasing-8 {
+  transition: transform 860ms cubic-bezier(0.16, 2.10, 0.36, 1),
+              border-radius 860ms cubic-bezier(0.16, 2.10, 0.36, 1);
+}
+
+.ball-name {
+  margin-top: 24rpx;
+  font-size: 28rpx;
+  color: rgba(100, 70, 80, 0.65);
+  letter-spacing: 4rpx;
+  font-weight: 500;
+}
+
+/* ── 挑战结果浮层 ─────────────────────────────────────────── */
+@keyframes resultPop {
+  0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  50%  { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+  75%  { transform: translate(-50%, -50%) scale(0.96); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+.result-popup {
+  position: fixed;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  z-index: 600;
+  padding: 40rpx 64rpx;
+  border-radius: 32rpx;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 12rpx 48rpx rgba(0, 0, 0, 0.12);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(145deg, #ffffff 0%, #ffe8f0 100%);
-  box-shadow: 0 16rpx 48rpx rgba(232, 160, 191, 0.35);
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  gap: 10rpx;
+  animation: resultPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  pointer-events: none;
+}
+.result-popup.result-perfect {
+  box-shadow: 0 12rpx 48rpx rgba(200, 160, 0, 0.28);
+}
+.result-popup.result-good {
+  box-shadow: 0 12rpx 48rpx rgba(60, 180, 100, 0.22);
 }
 
-/* 材质：过渡时间与阴影略有差异，增强「手感」认知 */
-.mat-soft_rubber {
-  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.mat-foam {
-  background: linear-gradient(145deg, #ffffff 0%, #e8f4fc 100%);
-  box-shadow: 0 12rpx 36rpx rgba(135, 206, 235, 0.3);
-}
-.mat-jelly {
-  background: linear-gradient(145deg, #fff5f8 0%, #ffc8dd 100%);
-  box-shadow: 0 18rpx 40rpx rgba(255, 150, 180, 0.35);
-}
-.mat-plush {
-  background: linear-gradient(145deg, #fffef5 0%, #fffacd 100%);
-  box-shadow: 0 14rpx 40rpx rgba(255, 235, 150, 0.35);
-}
-
-.squish.pressed {
-  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-.squish-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.squish-emoji {
-  font-size: 120rpx;
+.result-emoji { font-size: 56rpx; line-height: 1; }
+.result-text {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #444;
   line-height: 1;
-  user-select: none;
 }
+.result-popup.result-perfect .result-text { color: #b8860b; }
+.result-popup.result-good .result-text    { color: #2e7d32; }
+.result-popup.result-miss .result-text    { color: #888; }
+.result-stars { font-size: 36rpx; line-height: 1; min-height: 36rpx; }
 
-.jelly-shake {
-  animation: jellyShake 0.45s ease;
-}
-
-@keyframes jellyShake {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-4deg) scale(1.03);
-  }
-  75% {
-    transform: rotate(4deg) scale(0.98);
-  }
-}
-
-.toy-name {
-  margin-top: 28rpx;
-  font-size: 32rpx;
-  color: #555555;
-  font-weight: 600;
-}
-
+/* ── 底部工具栏 ───────────────────────────────────────────── */
 .toolbar {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20rpx;
-  padding: 0 32rpx;
+  align-items: center;
+  gap: 14rpx;
+  padding: 0 24rpx;
+  margin-bottom: 8rpx;
+  flex-shrink: 0;
 }
 
 .tool-btn {
-  font-size: 26rpx;
-  padding: 0 28rpx;
-  height: 72rpx;
-  line-height: 72rpx;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: 24rpx;
+  padding: 0 22rpx;
+  height: 68rpx;
+  line-height: 68rpx;
   border-radius: 999rpx;
   background: rgba(255, 255, 255, 0.92);
-  color: #666666;
+  color: #666;
   border: none;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
 }
+.tool-btn::after { border: none; }
+.tool-btn-hover { opacity: 0.82; }
 
-.tool-btn::after {
-  border: none;
-}
+.btn-icon { font-size: 26rpx; line-height: 1; }
 
-.tool-btn.primary {
+.scene-btn {
   background: linear-gradient(135deg, #ffb6c1 0%, #e8a0bf 100%);
-  color: #ffffff;
+  color: #fff;
 }
 
-.tool-btn-hover {
-  opacity: 0.88;
-}
+.flex-gap { flex: 1; }
 
+/* 挑战按钮（浮动圆形） */
+.challenge-fab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #c4a0e8 0%, #9b70cc 100%);
+  box-shadow: 0 8rpx 24rpx rgba(122, 82, 176, 0.42);
+  gap: 4rpx;
+  flex-shrink: 0;
+  transition: transform 150ms ease;
+}
+.challenge-fab.challenge-active {
+  background: linear-gradient(145deg, #bbb 0%, #888 100%);
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.18);
+}
+.challenge-fab:active { transform: scale(0.93); }
+
+.fab-icon  { font-size: 34rpx; line-height: 1; }
+.fab-label { font-size: 20rpx; color: #fff; line-height: 1; }
+
+/* ── 配色弹层 ─────────────────────────────────────────────── */
 .sheet-mask {
   position: fixed;
   inset: 0;
@@ -246,28 +440,85 @@
   align-items: flex-end;
   justify-content: center;
 }
-
 .sheet {
   width: 100%;
-  max-height: 70vh;
-  background: #ffffff;
+  max-height: 72vh;
+  background: #fff;
   border-radius: 28rpx 28rpx 0 0;
-  padding: 28rpx 24rpx 48rpx;
+  padding: 28rpx 24rpx 56rpx;
   box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.08);
 }
-
 .sheet-title {
   font-size: 34rpx;
-  font-weight: 600;
-  color: #444444;
+  font-weight: 700;
+  color: #444;
   text-align: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 8rpx;
+}
+.sheet-sub {
+  font-size: 22rpx;
+  color: #aaa;
+  text-align: center;
+  display: block;
+  margin-bottom: 24rpx;
 }
 
-.sheet-scroll {
-  max-height: 55vh;
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx 20rpx;
+  padding: 4rpx 8rpx;
 }
 
+.color-cell {
+  width: calc(20% - 16rpx);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+  position: relative;
+}
+
+.color-dot {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 50%;
+  transition: transform 150ms ease;
+}
+.color-cell.color-current .color-dot {
+  transform: scale(1.14);
+  box-shadow: 0 0 0 4rpx rgba(155, 112, 204, 0.45) !important;
+}
+.color-cell.color-locked { opacity: 0.55; }
+
+.color-name {
+  font-size: 20rpx;
+  color: #555;
+  text-align: center;
+  line-height: 1.2;
+}
+.color-lock {
+  font-size: 18rpx;
+  color: #bbb;
+  text-align: center;
+}
+.color-check {
+  position: absolute;
+  top: -4rpx;
+  right: 4rpx;
+  width: 30rpx;
+  height: 30rpx;
+  border-radius: 50%;
+  background: #9b70cc;
+  color: #fff;
+  font-size: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* ── 场景弹层 ─────────────────────────────────────────────── */
 .sheet-row {
   display: flex;
   align-items: center;
@@ -277,54 +528,8 @@
   background: #fafafa;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
 }
-
-.sheet-row.locked {
-  opacity: 0.92;
-}
-
-.row-emoji {
-  font-size: 56rpx;
-  margin-right: 20rpx;
-}
-
-.row-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6rpx;
-}
-
-.row-name {
-  font-size: 30rpx;
-  color: #333333;
-  font-weight: 600;
-}
-
-.row-desc {
-  font-size: 22rpx;
-  color: #888888;
-}
-
-.tag {
-  font-size: 22rpx;
-  padding: 8rpx 16rpx;
-  border-radius: 999rpx;
-}
-
-.tag.ok {
-  background: rgba(152, 251, 152, 0.35);
-  color: #3d8b3d;
-}
-
-.tag.price {
-  background: rgba(255, 182, 193, 0.4);
-  color: #a85a7a;
-}
-
-.scene-row {
-  flex-wrap: wrap;
-}
-
+.sheet-row.locked { opacity: 0.9; }
+.scene-row { flex-wrap: nowrap; }
 .scene-preview {
   width: 88rpx;
   height: 88rpx;
@@ -332,28 +537,49 @@
   margin-right: 20rpx;
   flex-shrink: 0;
 }
-
-/* 流畅画质：略减阴影，减轻 GPU 压力 */
-.quality-smooth .squish {
-  box-shadow: 0 10rpx 28rpx rgba(232, 160, 191, 0.22);
+.row-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
 }
-
-.quality-smooth .star {
-  animation: none;
-  opacity: 0.5;
+.row-name  { font-size: 30rpx; color: #333; font-weight: 600; }
+.row-desc  { font-size: 22rpx; color: #888; }
+.tag {
+  font-size: 22rpx;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
 }
+.tag.ok    { background: rgba(152, 251, 152, 0.35); color: #3d8b3d; }
+.tag.price { background: rgba(255, 182, 193, 0.40); color: #a85a7a; }
 
+/* ── 提示浮层 ─────────────────────────────────────────────── */
 .toast {
   position: fixed;
   left: 50%;
   bottom: 200rpx;
   transform: translateX(-50%);
-  z-index: 300;
-  padding: 20rpx 36rpx;
-  background: rgba(60, 60, 60, 0.88);
-  color: #ffffff;
+  z-index: 400;
+  padding: 20rpx 40rpx;
+  background: rgba(50, 50, 50, 0.88);
+  color: #fff;
   font-size: 26rpx;
   border-radius: 999rpx;
   max-width: 80%;
   text-align: center;
+  pointer-events: none;
+}
+
+/* ── 流畅画质优化 ─────────────────────────────────────────── */
+.quality-smooth .halo-ring {
+  transition: none;
+}
+.quality-smooth .star {
+  animation: none;
+  opacity: 0.5;
+}
+.quality-smooth .wave-ring,
+.quality-smooth .wave-ring2 {
+  display: none;
 }

@@ -1,0 +1,53 @@
+<view class="page">
+  <view class="hero">
+    <text class="hero-title">力度挑战</text>
+    <text class="hero-sub">玩法在玩耍页进行：上方目标力度条与倒计时，按压解压球松手判定。点下方按钮将跳转并自动开局；也可从底部「挑战」进入。</text>
+  </view>
+
+  <view class="stats-row">
+    <view class="stat-card">
+      <text class="stat-num">{{highScore}}</text>
+      <text class="stat-label">最高连续通关</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{consecutive}}</text>
+      <text class="stat-label">当前连续</text>
+    </view>
+  </view>
+
+  <button class="play-btn" bindtap="goPlay" hover-class="play-btn-hover">
+    去玩耍 · 开启挑战
+  </button>
+
+  <view class="section">
+    <text class="section-title">挑战解锁 · 球体配色</text>
+    <text class="section-hint">每连续通关 5 关可解锁一种新配色（在玩耍页「配色」中切换）</text>
+    <view class="color-grid">
+      <view
+        wx:for="{{colorList}}"
+        wx:key="id"
+        class="color-card {{item.unlocked ? '' : 'locked'}}"
+      >
+        <view
+          class="color-dot"
+          style="background:radial-gradient(circle at 35% 30%, {{item.highlight}}, {{item.body}});box-shadow:0 6rpx 16rpx rgba(0,0,0,0.15);"
+        ></view>
+        <text class="color-name">{{item.name}}</text>
+        <text wx:if="{{item.unlocked}}" class="badge ok">已解锁</text>
+        <text wx:else class="badge">{{item.unlockConsecutive}} 连</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tips card-tips">
+    <text class="tips-title">玩法提示</text>
+    <text class="tips-line">· 倒计时内需松手，松手时的力度档位需接近目标（完美 / 不错 / 再试试）</text>
+    <text class="tips-line">· 力度共 8 档，由按压时长决定；未命中可无限重试当前关</text>
+  </view>
+
+  <view class="footer-stats">
+    <text>累计放松约 {{playMinutes}} 分钟</text>
+  </view>
+
+  <custom-tab-bar current="challenge" />
+</view>

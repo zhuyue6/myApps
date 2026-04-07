@@ -3,19 +3,22 @@
  * 无服务端时全部 wx.storage，合规且零压力
  */
 
-const { TOYS, SCENES, PLAY_REWARD_MS, PLAY_REWARD_COINS } = require('./constants');
+const { TOYS, SCENES, PLAY_REWARD_MS, PLAY_REWARD_COINS, BALL_COLORS } = require('./constants');
 
 const KEYS = {
   INITED: 'nnl_inited',
   COINS: 'nnl_coins',
   UNLOCK_TOYS: 'nnl_unlock_toys',
   UNLOCK_SCENES: 'nnl_unlock_scenes',
+  UNLOCK_COLORS: 'nnl_unlock_colors',
+  CURRENT_COLOR: 'nnl_ball_color',
   SETTINGS: 'nnl_settings',
   LAST_LOGIN_DAY: 'nnl_last_login_day',
-  /** 在玩耍页累计停留毫秒数，用于「约 5 分钟」发币 */
   REWARD_ACCUM_MS: 'nnl_reward_accum_ms',
   LAST_PLAY_REWARD_AT: 'nnl_last_play_reward',
   TOTAL_PLAY_MS: 'nnl_total_play_ms',
+  CHALLENGE_HS: 'nnl_challenge_hs',
+  CHALLENGE_CONS: 'nnl_challenge_cons',
 };
 
 const DEFAULT_SETTINGS = {
@@ -42,6 +45,9 @@ function initUserDataIfNeeded() {
   const freeScenes = SCENES.filter((s) => s.unlockPrice === 0).map((s) => s.id);
   wx.setStorageSync(KEYS.UNLOCK_SCENES, freeScenes);
   wx.setStorageSync(KEYS.SETTINGS, { ...DEFAULT_SETTINGS });
+  // 默认解锁玫瑰粉配色
+  const freeColors = BALL_COLORS.filter((c) => c.unlockConsecutive === 0).map((c) => c.id);
+  wx.setStorageSync(KEYS.UNLOCK_COLORS, freeColors);
 }
 
 /** 每日登录 +10 解压币 */
@@ -148,6 +154,51 @@ function getTotalPlayMs() {
   return Number(wx.getStorageSync(KEYS.TOTAL_PLAY_MS)) || 0;
 }
 
+// ─── 球体配色 ────────────────────────────────────────────────
+
+function getUnlockedBallColorIds() {
+  const v = wx.getStorageSync(KEYS.UNLOCK_COLORS);
+  return Array.isArray(v) && v.length ? v : ['pink'];
+}
+
+function unlockBallColor(id) {
+  const list = getUnlockedBallColorIds();
+  if (list.indexOf(id) < 0) {
+    list.push(id);
+    wx.setStorageSync(KEYS.UNLOCK_COLORS, list);
+  }
+}
+
+function isBallColorUnlocked(id) {
+  return getUnlockedBallColorIds().indexOf(id) >= 0;
+}
+
+function getCurrentBallColor() {
+  return wx.getStorageSync(KEYS.CURRENT_COLOR) || 'pink';
+}
+
+function setCurrentBallColor(id) {
+  wx.setStorageSync(KEYS.CURRENT_COLOR, id);
+}
+
+// ─── 挑战关卡 ────────────────────────────────────────────────
+
+function getChallengeHighScore() {
+  return Number(wx.getStorageSync(KEYS.CHALLENGE_HS)) || 0;
+}
+
+function setChallengeHighScore(n) {
+  wx.setStorageSync(KEYS.CHALLENGE_HS, n);
+}
+
+function getChallengeConsecutive() {
+  return Number(wx.getStorageSync(KEYS.CHALLENGE_CONS)) || 0;
+}
+
+function setChallengeConsecutive(n) {
+  wx.setStorageSync(KEYS.CHALLENGE_CONS, n);
+}
+
 module.exports = {
   KEYS,
   initUserDataIfNeeded,
@@ -167,4 +218,13 @@ module.exports = {
   tryGrantPlayTimeReward,
   addTotalPlayMs,
   getTotalPlayMs,
+  getUnlockedBallColorIds,
+  unlockBallColor,
+  isBallColorUnlocked,
+  getCurrentBallColor,
+  setCurrentBallColor,
+  getChallengeHighScore,
+  setChallengeHighScore,
+  getChallengeConsecutive,
+  setChallengeConsecutive,
 };

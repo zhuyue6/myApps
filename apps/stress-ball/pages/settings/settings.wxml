@@ -16,6 +16,15 @@
   </view>
 
   <view class="block">
+    <text class="block-title">挑战</text>
+    <view class="row link-row" bindtap="goChallengeStats">
+      <text class="row-label">记录与配色解锁</text>
+      <text class="row-arrow">›</text>
+    </view>
+    <text class="hint">查看连续通关、最高记录与已解锁球体配色</text>
+  </view>
+
+  <view class="block">
     <text class="block-title">画面</text>
     <view class="row">
       <text class="row-label">画质偏好</text>

@@ -9,12 +9,12 @@
     <text class="tab-text">玩耍</text>
   </view>
   <view
-    class="tab-item {{current === 'collection' ? 'active' : ''}}"
-    data-path="collection"
+    class="tab-item {{current === 'challenge' ? 'active' : ''}}"
+    data-path="challenge"
     bindtap="onTap"
   >
-    <text class="tab-icon">📖</text>
-    <text class="tab-text">图鉴</text>
+    <text class="tab-icon">🎯</text>
+    <text class="tab-text">挑战</text>
   </view>
   <view
     class="tab-item {{current === 'settings' ? 'active' : ''}}"

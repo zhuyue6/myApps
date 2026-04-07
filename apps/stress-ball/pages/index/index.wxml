@@ -1,6 +1,7 @@
-<!-- 核心玩耍页：单指/双指捏捏、拖拽、场景与造型切换 -->
-<view class="page {{qualityClass}}" style="background: {{sceneGradient}}">
-  <!-- 星空花园粒子层 -->
+<!-- 解压球主玩耍页：3D 软胶球 + 力度光晕 + 挑战模式 -->
+<view class="page {{qualityClass}}" style="background:{{sceneGradient}};">
+
+  <!-- ── 背景粒子层 ─────────────────────────────────────── -->
   <view wx:if="{{sceneParticles === 'stars'}}" class="particles stars" aria-hidden="true">
     <view class="star s1"></view>
     <view class="star s2"></view>
@@ -10,75 +11,129 @@
   </view>
   <view wx:if="{{sceneParticles === 'curtain'}}" class="particles curtain" aria-hidden="true"></view>
 
-  <view class="top-bar">
-    <view class="coin-pill" bindtap="noop">
-      <text class="coin-icon">🪙</text>
-      <text class="coin-num">{{coins}}</text>
-      <text class="coin-label">解压币</text>
+  <!-- ── 挑战模式状态栏（仅挑战模式显示） ───────────────── -->
+  <view wx:if="{{challengeMode}}" class="challenge-header">
+    <view class="ch-meta">
+      <text class="ch-icon">🎯</text>
+      <text class="ch-level-text">关卡 {{challengeLevelNum}}</text>
+      <view class="ch-divider"></view>
+      <text class="ch-streak">连续 {{challengeConsecutive}}</text>
+      <text class="ch-best">最高 {{challengeHighScore}}</text>
+    </view>
+    <text class="ch-label">目标力度</text>
+    <view class="pressure-track">
+      <view
+        wx:for="{{pressureSegs}}"
+        wx:key="val"
+        class="pres-seg seg-v{{item.val}} {{item.isTarget ? 'seg-target' : ''}} {{item.isActive ? 'seg-active' : ''}} {{item.isInTarget ? 'seg-flash' : ''}} {{item.isPerfect ? 'seg-perfect' : ''}} {{item.isGood ? 'seg-good' : ''}}"
+      >
+        <text class="pres-label">{{item.label}}</text>
+      </view>
+    </view>
+    <view class="countdown-wrap">
+      <view class="countdown-fill" style="width:{{challengeCountdownPct}}%;"></view>
+      <text class="countdown-sec">{{challengeCountdownSec}}s</text>
     </view>
   </view>
 
-  <!-- 首次轻提示，可关闭 -->
-  <view wx:if="{{showHint}}" class="hint-banner" bindtap="dismissHint">
-    <text>单指轻捏或拖动；双指同时按，反馈更强～</text>
-    <text class="hint-close">知道了</text>
-  </view>
-
+  <!-- ── 主舞台 ──────────────────────────────────────────── -->
   <view class="stage">
     <view
       class="squish-wrap"
-      style="transform: translate({{offsetX}}px, {{offsetY}}px);"
+      style="transform:translate({{offsetX}}px,{{offsetY}}px);"
     >
-      <view
-        class="squish mat-{{toyMaterial}} {{pressing ? 'pressed' : ''}}"
-        style="transform: scale({{squishScale}}) rotate({{rotateDeg}}deg); transition-duration: {{transitionMs}}ms;"
-        bindtouchstart="onTouchStart"
-        bindtouchmove="onTouchMove"
-        bindtouchend="onTouchEnd"
-        bindtouchcancel="onTouchEnd"
-      >
-        <view class="squish-inner {{jellyWobble ? 'jelly-shake' : ''}}">
-          <text class="squish-emoji">{{toyEmoji}}</text>
+      <view class="ball-stage">
+        <!-- 超重释放波纹 -->
+        <view wx:if="{{showWave}}" class="wave-ring"></view>
+        <view wx:if="{{showWave}}" class="wave-ring wave-ring2"></view>
+
+        <!-- 环形力度光晕 -->
+        <view
+          wx:if="{{haloVisible}}"
+          class="halo-ring {{haloFlash ? 'halo-flash' : ''}}"
+          style="{{haloStyle}}"
+        ></view>
+
+        <!-- 篮球贴图 + 连续形变 -->
+        <view
+          class="stress-ball {{pressing ? 'is-pressing' : ''}} {{releaseClass}}"
+          style="{{squishStyle}}{{ballStyle}}"
+          bindtouchstart="onTouchStart"
+          bindtouchmove="onTouchMove"
+          bindtouchend="onTouchEnd"
+          bindtouchcancel="onTouchEnd"
+        >
+          <image
+            class="basketball-face"
+            src="/assets/images/basketball.svg"
+            mode="aspectFill"
+          />
         </view>
       </view>
-      <text class="toy-name">{{toyName}}</text>
+      <text class="ball-name">篮球解压</text>
     </view>
   </view>
 
+  <!-- ── 挑战结果浮层 ────────────────────────────────────── -->
+  <view wx:if="{{challengeResultVisible}}" class="result-popup result-{{challengeResult}}">
+    <text class="result-emoji">
+      {{challengeResult === 'perfect' ? '✨' : challengeResult === 'good' ? '👍' : '💪'}}
+    </text>
+    <text class="result-text">
+      {{challengeResult === 'perfect' ? '完美！' : challengeResult === 'good' ? '不错！' : '再试试'}}
+    </text>
+    <text class="result-stars">
+      {{challengeResult === 'perfect' ? '⭐⭐⭐' : challengeResult === 'good' ? '⭐⭐' : ''}}
+    </text>
+  </view>
+
+  <!-- ── 底部工具栏 ───────────────────────────────────────── -->
   <view class="toolbar">
-    <button class="tool-btn" bindtap="openToySheet" hover-class="tool-btn-hover">换造型</button>
-    <button class="tool-btn primary" bindtap="openSceneSheet" hover-class="tool-btn-hover">换场景</button>
-    <button class="tool-btn" open-type="share" hover-class="tool-btn-hover">分享给好友</button>
-  </view>
-
-  <!-- 造型底部弹层 -->
-  <view wx:if="{{toySheetVisible}}" class="sheet-mask" bindtap="closeSheets">
-    <view class="sheet" catchtap="noop">
-      <view class="sheet-title">选一个捏捏</view>
-      <scroll-view scroll-y class="sheet-scroll">
-        <view
-          wx:for="{{toyList}}"
-          wx:key="id"
-          class="sheet-row {{item.unlocked ? '' : 'locked'}}"
-          data-id="{{item.id}}"
-          bindtap="onSelectToy"
-        >
-          <text class="row-emoji">{{item.emoji}}</text>
-          <view class="row-info">
-            <text class="row-name">{{item.name}}</text>
-            <text class="row-desc">{{item.desc}}</text>
-          </view>
-          <view wx:if="{{item.unlocked}}" class="tag ok">已拥有</view>
-          <view wx:else class="tag price">{{item.unlockPrice}} 币</view>
-        </view>
-      </scroll-view>
+    <button class="tool-btn color-btn" bindtap="openColorSheet" hover-class="tool-btn-hover">
+      <text class="btn-icon">🎨</text>配色
+    </button>
+    <button class="tool-btn scene-btn" bindtap="openSceneSheet" hover-class="tool-btn-hover">
+      <text class="btn-icon">🌿</text>场景
+    </button>
+    <button class="tool-btn share-btn" open-type="share" hover-class="tool-btn-hover">
+      <text class="btn-icon">💌</text>分享
+    </button>
+    <view class="flex-gap"></view>
+    <view
+      class="challenge-fab {{challengeMode ? 'challenge-active' : ''}}"
+      bindtap="toggleChallengeMode"
+    >
+      <text class="fab-icon">{{challengeMode ? '✕' : '🎯'}}</text>
+      <text class="fab-label">{{challengeMode ? '退出' : '挑战'}}</text>
     </view>
   </view>
 
-  <!-- 场景底部弹层 -->
+  <!-- ── 配色选择弹层 ─────────────────────────────────────── -->
+  <view wx:if="{{colorSheetVisible}}" class="sheet-mask" bindtap="closeSheets">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">选择配色</view>
+      <text class="sheet-sub">挑战连续通关可解锁更多配色</text>
+      <view class="color-grid">
+        <view
+          wx:for="{{colorList}}"
+          wx:key="id"
+          class="color-cell {{item.isCurrent ? 'color-current' : ''}} {{item.unlocked ? '' : 'color-locked'}}"
+          data-id="{{item.id}}"
+          bindtap="onSelectColor"
+        >
+          <view class="color-dot" style="background:radial-gradient(circle at 35% 30%, {{item.highlight}}, {{item.body}});box-shadow:0 6rpx 16rpx rgba(0,0,0,0.18);"></view>
+          <text class="color-name">{{item.name}}</text>
+          <text wx:if="{{!item.unlocked}}" class="color-lock">{{item.unlockConsecutive}}连</text>
+          <view wx:if="{{item.isCurrent}}" class="color-check">✓</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ── 场景选择弹层 ─────────────────────────────────────── -->
   <view wx:if="{{sceneSheetVisible}}" class="sheet-mask" bindtap="closeSheets">
     <view class="sheet" catchtap="noop">
-      <view class="sheet-title">换一个场景</view>
+      <view class="sheet-title">切换场景</view>
       <view
         wx:for="{{sceneList}}"
         wx:key="id"
@@ -86,7 +141,7 @@
         data-id="{{item.id}}"
         bindtap="onSelectScene"
       >
-        <view class="scene-preview" style="background: {{item.gradient}}"></view>
+        <view class="scene-preview" style="background:{{item.gradient}};"></view>
         <view class="row-info">
           <text class="row-name">{{item.name}}</text>
           <text class="row-desc">{{item.unlockPrice === 0 ? '免费场景' : '解锁放松氛围'}}</text>
@@ -97,8 +152,8 @@
     </view>
   </view>
 
-  <!-- 奖励轻提示 -->
+  <!-- ── 提示浮层 ──────────────────────────────────────────── -->
   <view wx:if="{{toast}}" class="toast">{{toast}}</view>
 
-  <custom-tab-bar current="index" />
+  <custom-tab-bar current="{{challengeMode ? 'challenge' : 'index'}}" />
 </view>

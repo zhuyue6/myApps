@@ -22,6 +22,10 @@ Page({
     feedbackText: '',
   },
 
+  goChallengeStats() {
+    wx.navigateTo({ url: '/pages/challenge/challenge' });
+  },
+
   onShow() {
     const settings = storage.getSettings();
     const qualityIndex = Math.max(
