@@ -51,3 +51,6 @@ API 使用：
 组件配置：component.json 中必须设置 "component": true，如果需要使用其他组件，在 usingComponents 中引入。
 格式规范：JSON 文件必须严格遵循 JSON 格式，不能有 trailing comma（ trailing comma 指最后一个属性后面的逗号），键名必须用双引号
 
+### 5. UI 规范
+所有功能必须优先使用@vant/weapp的 ui框架组件实现
+

@@ -1,28 +1,42 @@
 <view class="page safe-bottom">
-  <view class="card nav-card">
-    <button class="nav-btn" bindtap="prevMonth">‹</button>
-    <text class="nav-title">{{title}}</text>
-    <button class="nav-btn" bindtap="nextMonth">›</button>
+  <goal-calendar-board
+    year="{{year}}"
+    month="{{month}}"
+    day-stats="{{dayStats}}"
+    selected-date="{{selectedDate}}"
+    bind:yearchange="onYearChange"
+    bind:monthchange="onMonthChange"
+    bind:daypick="onDayPick"
+  />
+
+  <view class="today-wrap">
+    <van-button size="small" plain round bind:click="goToday">回到今天</van-button>
   </view>
-  <view class="legend card">
-    <view class="dot on" />
-    <text class="text-muted">当日有打卡</text>
-  </view>
-  <view class="week-head">
-    <text wx:for="{{['日','一','二','三','四','五','六']}}" wx:key="*this" class="wd">{{item}}</text>
-  </view>
-  <view class="grid">
-    <block wx:for="{{weeks}}" wx:for-item="row" wx:key="*this">
-      <view class="row">
-        <block wx:for="{{row}}" wx:for-item="cell" wx:for-index="ci" wx:key="ci">
-          <view wx:if="{{cell.empty}}" class="cell empty" />
-          <view wx:else class="cell {{cell.isToday ? 'today' : ''}}">
-            <text class="day-num">{{cell.day}}</text>
-            <view wx:if="{{cell.checked}}" class="dot" />
-          </view>
-        </block>
+
+  <view wx:if="{{selectedInfo}}" class="selected-card">
+    <view class="selected-head">
+      <text class="selected-date">{{selectedInfo.ymd}}</text>
+      <text wx:if="{{selectedInfo.planned > 0 && selectedInfo.checked >= selectedInfo.planned}}" class="selected-tag done">已完成</text>
+      <text wx:elif="{{selectedInfo.checked > 0}}" class="selected-tag checked">打卡 {{selectedInfo.checked}}</text>
+      <text wx:elif="{{selectedInfo.planned > 0}}" class="selected-tag planned">计划 {{selectedInfo.planned}}</text>
+      <text wx:else class="selected-tag empty">无记录</text>
+    </view>
+    <view class="selected-body">
+      <view class="stat-col">
+        <text class="stat-val">{{selectedInfo.planned}}</text>
+        <text class="stat-lbl">计划次数</text>
       </view>
-    </block>
+      <view class="stat-col">
+        <text class="stat-val">{{selectedInfo.checked}}</text>
+        <text class="stat-lbl">已打卡</text>
+      </view>
+    </view>
   </view>
-  <text class="text-muted foot">仅汇总本机打卡记录；接入云开发后可跨设备同步。</text>
+
+  <van-notice-bar
+    color="#888888"
+    background="#f6f8fb"
+    left-icon="info-o"
+    text="日期上「计划 N」为当日应打卡次数，「打卡 M」为已打卡次数，完成时自动标记「已完成」。"
+  />
 </view>

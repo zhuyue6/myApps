@@ -1,0 +1,17 @@
+<view class="page safe-bottom">
+  <van-notice-bar color="#5a8fc7" background="#eef6fc" left-icon="info-o" text="可多选，也可直接跳过。标签用于分类与统计。" />
+  <view class="chips">
+    <view wx:for="{{presets}}" wx:key="id" class="chip-hit" mark:pid="{{item.id}}" bindtap="toggle">
+      <van-tag type="{{selected[item.id] ? 'primary' : 'default'}}" plain="{{!selected[item.id]}}" size="medium">
+        {{item.name}}
+      </van-tag>
+    </view>
+  </view>
+  <van-cell-group inset class="card">
+    <van-field label="自定义标签" placeholder="输入后会在下一步可用" value="{{customInput}}" bind:change="onCustomInput" />
+  </van-cell-group>
+  <view class="row-actions">
+    <van-button plain hairline type="primary" round custom-class="half" bind:click="onSkip">跳过</van-button>
+    <van-button type="primary" round custom-class="half" bind:click="onNext">下一步</van-button>
+  </view>
+</view>

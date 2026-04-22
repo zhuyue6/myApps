@@ -1,0 +1,36 @@
+<view class="page safe-bottom" wx:if="{{dash}}">
+  <van-grid column-num="2" border="{{false}}" gutter="12">
+    <van-grid-item use-slot wx:for="{{statCells}}" wx:key="k">
+      <view class="stat-inner">
+        <text class="num">{{item.num}}</text>
+        <text class="lbl">{{item.lbl}}</text>
+      </view>
+    </van-grid-item>
+  </van-grid>
+
+  <view class="tag-stats">
+    <view class="tag-stats-head">
+      <text class="stats-title">按标签分布</text>
+      <text class="stats-sub">主/子目标共同计入</text>
+    </view>
+    <view wx:if="{{tagList.length}}" class="tag-stats-list">
+      <view wx:for="{{tagList}}" wx:key="id" class="tag-stats-row">
+        <view class="tag-row-head">
+          <text class="tag-name">{{item.name}}</text>
+          <text class="tag-count">{{item.goals}} 个</text>
+        </view>
+        <view class="tag-row-bar">
+          <van-progress
+            percentage="{{item.avgRate}}"
+            stroke-width="8"
+            color="linear-gradient(90deg, #b8e0ff 0%, #7ec8e3 100%)"
+            inactive-color="#eef2f6"
+            show-pivot="{{false}}"
+          />
+          <text class="tag-rate">{{item.avgRate}}%</text>
+        </view>
+      </view>
+    </view>
+    <van-empty wx:else description="暂无带标签的目标" />
+  </view>
+</view>

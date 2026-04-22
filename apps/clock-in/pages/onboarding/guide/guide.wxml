@@ -1,0 +1,47 @@
+<view class="page safe-bottom">
+  <view class="hero">
+    <text class="title">开启打卡之旅</text>
+    <text class="sub">按顺序完成以下四步，之后也可随时在首页继续完善。</text>
+  </view>
+
+  <view class="step-list">
+    <view wx:for="{{steps}}" wx:key="key" class="step-item {{item.done ? 'step-done' : ''}}">
+      <view class="step-index">
+        <block wx:if="{{item.done}}">
+          <van-icon name="success" size="32rpx" color="#ffffff" />
+        </block>
+        <block wx:else>{{index + 1}}</block>
+      </view>
+      <view class="step-body">
+        <text class="step-title">{{item.title}}</text>
+        <text class="step-desc">{{item.desc}}</text>
+      </view>
+      <view class="step-action">
+        <van-button
+          size="small"
+          round
+          plain="{{item.done}}"
+          type="{{item.done ? 'default' : 'primary'}}"
+          data-key="{{item.key}}"
+          bind:click="goStep"
+        >
+          {{item.done ? '再改改' : '去完成'}}
+        </van-button>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot-actions">
+    <van-button plain round block custom-class="half" bind:click="onSkip">以后再说</van-button>
+    <van-button
+      type="primary"
+      round
+      block
+      custom-class="half"
+      disabled="{{!canFinish}}"
+      bind:click="onFinish"
+    >
+      完成引导
+    </van-button>
+  </view>
+</view>

@@ -1,31 +1,71 @@
 /**
- * 全局常量：标签、订阅消息模板占位（上线前在公众平台申请后替换）
+ * 业务常量：预设标签、目标模板、成就阈值、补卡窗口
  */
 
-/** 主目标分类标签 */
-const GOAL_TAGS = ['学习', '工作', '健康', '生活', '其他'];
-
-/** 优先级展示 */
-const PRIORITIES = [
-  { value: 1, label: '低' },
-  { value: 2, label: '中' },
-  { value: 3, label: '高' },
+/** 系统预设标签（不可删改，仅存 id 映射名称） */
+const PRESET_TAGS = [
+  { id: 'preset_read', name: '阅读' },
+  { id: 'preset_study', name: '学习' },
+  { id: 'preset_sport', name: '运动' },
+  { id: 'preset_write', name: '写作' },
+  { id: 'preset_work', name: '工作' },
+  { id: 'preset_fat', name: '减脂' },
+  { id: 'preset_early', name: '早起' },
+  { id: 'preset_exam', name: '备考' },
 ];
 
-/**
- * 订阅消息模板 ID（须与类目、场景一致；未配置时不调用 requestSubscribeMessage）
- * 文档：https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/subscribe-message.html
- */
-const SUBSCRIBE_TMPL_IDS = [
-  // 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+/** 按标签推荐模板（名称 + 默认描述） */
+const GOAL_TEMPLATES_BY_TAG = {
+  preset_sport: [
+    { name: '每周 3 次跑步', description: '每次不少于 20 分钟' },
+    { name: '每日跳绳 10 分钟', description: '' },
+  ],
+  preset_study: [
+    { name: '每日背单词 30 个', description: '' },
+    { name: '每晚复习 1 小时', description: '' },
+  ],
+  preset_read: [
+    { name: '每日阅读 20 页', description: '' },
+  ],
+  preset_early: [
+    { name: '工作日 7:00 前起床', description: '' },
+  ],
+  default: [
+    { name: '我的第一个小目标', description: '拆解目标，打卡落地' },
+  ],
+};
+
+const ACHIEVEMENT_DEFS = [
+  { id: 'first_done', title: '首次目标达成', desc: '完成任意一个目标', check: (ctx) => ctx.completedGoalsCount >= 1 },
+  { id: 'ten_done', title: '十星成就', desc: '累计完成 10 个目标', check: (ctx) => ctx.completedGoalsCount >= 10 },
+  { id: 'streak_7', title: '连续 7 天', desc: '任意子目标连续打卡 7 天', check: (ctx) => ctx.maxStreak >= 7 },
+  { id: 'streak_30', title: '连续 30 天', desc: '任意子目标连续打卡 30 天', check: (ctx) => ctx.maxStreak >= 30 },
+  { id: 'perfect_once', title: '满分一次', desc: '存在完成率 100% 的已结束目标', check: (ctx) => ctx.hasPerfectOnce },
 ];
 
-/** 非紧急提醒建议避免时段（与合规建议一致，仅用于端内提示） */
-const QUIET_HOURS = { start: 22, end: 7 };
+/** 补卡：各周期可回溯数量（探索版统一常量） */
+const MAKEUP_WINDOW = {
+  day: 7,
+  week: 4,
+  month: 3,
+  year: 2,
+};
+
+/** 单目标累计补卡上限 */
+const MAX_MAKEUP_PER_GOAL = 30;
+
+/** 回收站保留天数 */
+const TRASH_RETENTION_DAYS = 30;
+
+/** 结束超过该天数自动归档 */
+const AUTO_ARCHIVE_AFTER_END_DAYS = 30;
 
 module.exports = {
-  GOAL_TAGS,
-  PRIORITIES,
-  SUBSCRIBE_TMPL_IDS,
-  QUIET_HOURS,
+  PRESET_TAGS,
+  GOAL_TEMPLATES_BY_TAG,
+  ACHIEVEMENT_DEFS,
+  MAKEUP_WINDOW,
+  MAX_MAKEUP_PER_GOAL,
+  TRASH_RETENTION_DAYS,
+  AUTO_ARCHIVE_AFTER_END_DAYS,
 };

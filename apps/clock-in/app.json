@@ -1,46 +1,71 @@
 {
+  "usingComponents": {
+    "van-button": "@vant/weapp/button/index",
+    "van-cell": "@vant/weapp/cell/index",
+    "van-cell-group": "@vant/weapp/cell-group/index",
+    "van-checkbox": "@vant/weapp/checkbox/index",
+    "van-checkbox-group": "@vant/weapp/checkbox-group/index",
+    "van-divider": "@vant/weapp/divider/index",
+    "van-empty": "@vant/weapp/empty/index",
+    "van-field": "@vant/weapp/field/index",
+    "van-grid": "@vant/weapp/grid/index",
+    "van-grid-item": "@vant/weapp/grid-item/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-loading": "@vant/weapp/loading/index",
+    "van-notice-bar": "@vant/weapp/notice-bar/index",
+    "van-popup": "@vant/weapp/popup/index",
+    "van-progress": "@vant/weapp/progress/index",
+    "van-radio": "@vant/weapp/radio/index",
+    "van-radio-group": "@vant/weapp/radio-group/index",
+    "van-switch": "@vant/weapp/switch/index",
+    "van-tag": "@vant/weapp/tag/index"
+  },
   "pages": [
+    "pages/index/index",
     "pages/goals/list/list",
+    "pages/calendar/calendar",
+    "pages/profile/profile",
+    "pages/onboarding/welcome/welcome",
+    "pages/onboarding/tags/tags",
+    "pages/onboarding/guide/guide",
     "pages/goals/detail/detail",
     "pages/goals/edit/edit",
-    "pages/subgoal/edit/edit",
-    "pages/calendar/calendar",
-    "pages/reminders/list/list",
-    "pages/reminders/edit/edit",
-    "pages/mine/mine"
+    "pages/goals/link-subs/link-subs",
+    "pages/tags/manage/manage",
+    "pages/archive/archive",
+    "pages/trash/trash",
+    "pages/stats/stats",
+    "pages/review/review",
+    "pages/settings/settings"
   ],
-  "window": {
-    "navigationBarTitleText": "目标打卡",
-    "navigationBarBackgroundColor": "#F0FAF5",
-    "navigationBarTextStyle": "black",
-    "backgroundColor": "#FAFAFA",
-    "backgroundTextStyle": "dark"
-  },
   "tabBar": {
-    "color": "#888888",
-    "selectedColor": "#5CB894",
-    "backgroundColor": "#FFFFFF",
+    "color": "#8a99ad",
+    "selectedColor": "#5a8fc7",
+    "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/goals/list/list",
-        "text": "目标"
+        "text": "首页"
       },
       {
         "pagePath": "pages/calendar/calendar",
-        "text": "日历"
+        "text": "打卡日历"
       },
       {
-        "pagePath": "pages/reminders/list/list",
-        "text": "提醒"
-      },
-      {
-        "pagePath": "pages/mine/mine",
+        "pagePath": "pages/profile/profile",
         "text": "我的"
       }
     ]
   },
+  "window": {
+    "navigationBarTitleText": "目标打卡",
+    "navigationBarBackgroundColor": "#E8F4FC",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FAFAFA",
+    "backgroundTextStyle": "dark"
+  },
+  "entryPagePath": "pages/index/index",
   "sitemapLocation": "sitemap.json",
-  "lazyCodeLoading": "requiredComponents",
-  "__usePrivacyCheck__": true
+  "lazyCodeLoading": "requiredComponents"
 }

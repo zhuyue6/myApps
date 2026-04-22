@@ -1,38 +1,61 @@
 <view class="page safe-bottom">
-  <view wx:if="{{showWelcome}}" class="mask" catchtouchmove="noop">
-    <view class="dialog card">
-      <text class="dialog-title">欢迎使用目标打卡</text>
-      <text class="dialog-body">数据默认保存在本机，可随时在「我的」中清空。提醒功能需你主动授权；关注公众号为可选增强，不关注也可完整使用目标与打卡功能。</text>
-      <button class="btn-primary dialog-btn" bindtap="closeWelcome">我知道了</button>
+  <view class="topbar">
+    <view class="top-entry" bindtap="goTags">
+      <van-icon name="label-o" size="36rpx" color="#5a8fc7" />
+      <text class="top-entry-text">标签管理</text>
+    </view>
+    <view class="top-actions">
+      <view class="chip-hit" bindtap="toggleActiveOnly">
+        <van-tag plain="{{!activeOnly}}" type="{{activeOnly ? 'primary' : 'default'}}" size="medium">
+          {{activeOnly ? '仅进行中' : '显示全部'}}
+        </van-tag>
+      </view>
+      <van-button type="primary" size="small" round bind:click="goAdd" icon="plus">新建</van-button>
     </view>
   </view>
 
-  <view class="header">
-    <text class="title">进行中与计划</text>
-    <button class="btn-add" bindtap="onAddTap">+ 新建目标</button>
-  </view>
+  <van-loading wx:if="{{loading}}" type="spinner" vertical size="24px" class="load-block">加载中…</van-loading>
 
-  <view wx:if="{{goals.length === 0}}" class="empty card">
-    <text>还没有目标，点右上角新建一个吧～</text>
-  </view>
+  <view wx:for="{{goals}}" wx:key="id" class="goal-card" data-gid="{{item.id}}" bindtap="goDetail">
+    <view class="goal-head">
+      <view class="goal-title-wrap">
+        <view class="type-badge type-{{item.type}}">{{item.type === 'main' ? '主' : '子'}}</view>
+        <text class="goal-title">{{item.name}}</text>
+      </view>
+      <text class="goal-status status-{{item.status}}">{{item.statusZh}}</text>
+    </view>
 
-  <block wx:for="{{goals}}" wx:key="id">
-    <view class="goal card" data-id="{{item.id}}" bindtap="onGoalTap">
-      <view class="goal-top">
-        <text class="goal-name">{{item.name}}</text>
-        <text class="tag status-{{item.status}}">{{item.status === 'done' ? '已完成' : item.status === 'expired' ? '已过期' : '进行中'}}</text>
+    <view class="goal-meta">
+      <text class="meta-date">至 {{item.endDate}}</text>
+      <view wx:if="{{item.tagName}}" class="meta-tag-wrap">
+        <van-tag plain type="primary" size="mini" custom-class="meta-tag">{{item.tagName}}</van-tag>
       </view>
-      <text class="text-muted goal-desc">{{item.desc || '暂无描述'}}</text>
-      <view class="goal-meta">
-        <text class="tag tag-soft">{{item.tag}}</text>
-        <text wx:if="{{item.endDate}}" class="text-muted">截止 {{item.endDate}}</text>
-      </view>
-      <view class="progress-wrap">
-        <view class="progress-bar">
-          <view class="progress-inner" style="width: {{item.progress || 0}}%;" />
+    </view>
+
+    <view class="goal-progress">
+      <van-progress
+        percentage="{{item.progress || 0}}"
+        stroke-width="8"
+        color="linear-gradient(90deg, #b8e0ff 0%, #7ec8e3 100%)"
+        inactive-color="#eef2f6"
+        show-pivot="{{false}}"
+      />
+      <text class="prog">{{item.progress || 0}}%</text>
+    </view>
+
+    <view wx:if="{{item.type === 'main' && item.subLinksDisplay.length}}" class="sub-chips">
+      <text class="sub-label">关联子目标</text>
+      <view class="sub-chip-row">
+        <view wx:for="{{item.subLinksDisplay}}" wx:for-item="sub" wx:key="subGoalId" class="sub-chip">
+          <text class="sub-chip-name">{{sub.subName}}</text>
+          <text class="sub-chip-weight">{{sub.weight}}%</text>
         </view>
-        <text class="text-muted progress-text">{{item.progress || 0}}%</text>
       </view>
     </view>
-  </block>
+    <view wx:elif="{{item.type === 'main' && !item.subLinksDisplay.length}}" class="sub-empty">
+      <text>暂未关联子目标</text>
+    </view>
+  </view>
+
+  <van-empty wx:if="{{!loading && !goals.length}}" description="暂无目标，点击「新建」开始吧" />
 </view>

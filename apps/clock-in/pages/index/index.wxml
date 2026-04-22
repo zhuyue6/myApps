@@ -1,0 +1,3 @@
+<view class="wrap">
+  <van-loading type="spinner" vertical size="24px">正在进入…</van-loading>
+</view>

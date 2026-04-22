@@ -1,22 +1,4 @@
 {
-  "libVersion": "3.15.0",
-  "projectname": "clock-in",
-  "setting": {
-    "urlCheck": true,
-    "coverView": true,
-    "lazyloadPlaceholderEnable": false,
-    "skylineRenderEnable": false,
-    "preloadBackgroundData": false,
-    "autoAudits": false,
-    "useApiHook": true,
-    "useApiHostProcess": true,
-    "showShadowRootInWxmlPanel": true,
-    "useStaticServer": false,
-    "useLanDebug": false,
-    "showES6CompileOption": false,
-    "compileHotReLoad": true,
-    "checkInvalidKey": true,
-    "ignoreDevUnusedFiles": true,
-    "bigPackageSizeSupport": false
-  }
+  "description": "私有配置，勿提交敏感信息",
+  "projectname": "clock-in"
 }

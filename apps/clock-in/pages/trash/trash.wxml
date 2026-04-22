@@ -1,0 +1,11 @@
+<view class="page safe-bottom">
+  <van-cell-group inset>
+    <van-cell wx:for="{{goals}}" wx:key="id" title="{{item.name}}" border="{{false}}">
+      <view slot="right-icon" class="trash-btns">
+        <van-button size="mini" round mark:rid="{{item.id}}" bind:click="onRestore">恢复</van-button>
+        <van-button type="danger" plain hairline size="mini" round mark:pid="{{item.id}}" bind:click="onPurge">清除</van-button>
+      </view>
+    </van-cell>
+  </van-cell-group>
+  <van-empty wx:if="{{!goals.length}}" description="回收站为空" />
+</view>

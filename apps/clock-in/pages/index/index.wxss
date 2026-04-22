@@ -1,0 +1,13 @@
+.wrap {
+  min-height: 70vh;
+  padding: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.muted {
+  color: #888888;
+  font-size: 28rpx;
+}

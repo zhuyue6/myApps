@@ -1,0 +1,96 @@
+.page {
+  padding: 32rpx 24rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.hero {
+  padding: 16rpx 8rpx 28rpx;
+}
+
+.title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 10rpx;
+}
+
+.sub {
+  display: block;
+  font-size: 26rpx;
+  color: #888888;
+  line-height: 1.6;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-bottom: 48rpx;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 22rpx 24rpx;
+  background: #ffffff;
+  border-radius: 18rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.05);
+}
+
+.step-done {
+  background: linear-gradient(135deg, #f6fbff 0%, #eaf4fc 100%);
+}
+
+.step-index {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 999rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: #b9d5e7;
+  font-size: 28rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.step-done .step-index {
+  background: #7ed0a0;
+}
+
+.step-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 4rpx;
+}
+
+.step-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #888888;
+  line-height: 1.4;
+}
+
+.step-action {
+  flex-shrink: 0;
+}
+
+.foot-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.half {
+  flex: 1 !important;
+}

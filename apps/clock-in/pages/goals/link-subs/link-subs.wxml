@@ -1,0 +1,22 @@
+<view class="page safe-bottom">
+  <van-notice-bar color="#5a8fc7" background="#eef6fc" left-icon="info-o" text="勾选子目标并分配权重，合计必须为 100%。当前合计 {{sum}}%" />
+  <van-cell-group inset class="list">
+    <van-cell wx:for="{{subs}}" wx:key="id" title="{{item.name}}" label="至 {{item.endDate}}" border="{{false}}">
+      <view slot="right-icon" class="cell-right">
+        <van-switch checked="{{picked[item.id].on}}" mark:sid="{{item.id}}" bind:change="onSwitch" size="22px" />
+        <van-field
+          wx:if="{{picked[item.id].on}}"
+          type="digit"
+          placeholder="权重"
+          value="{{picked[item.id].weight}}"
+          mark:wid="{{item.id}}"
+          bind:change="onWeight"
+          border="{{false}}"
+          custom-style="width: 140rpx; margin-left: 12rpx; padding: 0;"
+        />
+      </view>
+    </van-cell>
+  </van-cell-group>
+  <van-empty wx:if="{{!subs.length}}" description="暂无可关联子目标，请先创建子目标" />
+  <van-button type="primary" block round bind:click="onConfirm">确定</van-button>
+</view>

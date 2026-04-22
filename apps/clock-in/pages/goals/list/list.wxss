@@ -1,71 +1,117 @@
 .page {
-  padding: 24rpx 28rpx 120rpx;
+  padding: 24rpx;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.header {
+.topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24rpx;
+  margin-bottom: 20rpx;
+  padding: 20rpx 24rpx;
+  background: #ffffff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
-.title {
-  font-size: 34rpx;
-  font-weight: 600;
-  color: #333333;
-}
-
-.btn-add {
-  background: #e8f7f0;
-  color: #3d8b6e;
-  font-size: 26rpx;
-  padding: 12rpx 24rpx;
-  border-radius: 999rpx;
-  border: none;
-  margin: 0;
-}
-
-.empty {
-  text-align: center;
-  color: #888888;
-  padding: 48rpx 24rpx;
-}
-
-.goal-top {
+.top-entry {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.top-entry-text {
+  font-size: 28rpx;
+  color: #5a8fc7;
+  font-weight: 500;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
   gap: 16rpx;
+}
+
+.chip-hit {
+  display: inline-flex;
+}
+
+.load-block {
+  display: block;
+  text-align: center;
+  padding: 48rpx 0;
+}
+
+.goal-card {
+  background: #ffffff;
+  border-radius: 18rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.06);
+}
+
+.goal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 12rpx;
 }
 
-.goal-name {
-  font-size: 32rpx;
+.goal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.type-badge {
+  font-size: 22rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 999rpx;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.type-main {
+  background: #7ec8e3;
+}
+
+.type-sub {
+  background: #b9d5e7;
+}
+
+.goal-title {
+  font-size: 30rpx;
   font-weight: 600;
   color: #333333;
-  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.status-active {
-  background: #e3f4ff;
-  color: #3a7ca5;
-}
-
-.status-done {
-  background: #e8f7f0;
-  color: #3d8b6e;
-}
-
-.status-expired {
-  background: #f0f0f0;
+.goal-status {
+  font-size: 24rpx;
   color: #888888;
+  flex-shrink: 0;
+  margin-left: 16rpx;
 }
 
-.goal-desc {
-  display: block;
-  margin-bottom: 16rpx;
-  line-height: 1.5;
+.status-in_progress {
+  color: #5a8fc7;
+}
+
+.status-completed {
+  color: #5cb67f;
+}
+
+.status-incomplete {
+  color: #d98e8e;
+}
+
+.status-paused {
+  color: #a98d5b;
 }
 
 .goal-meta {
@@ -75,71 +121,76 @@
   margin-bottom: 16rpx;
 }
 
-.tag-soft {
-  background: #fff5e6;
-  color: #b8860b;
+.meta-date {
+  font-size: 24rpx;
+  color: #888888;
 }
 
-.progress-wrap {
+.meta-tag {
+  font-size: 22rpx !important;
+}
+
+.goal-progress {
   display: flex;
   align-items: center;
   gap: 16rpx;
 }
 
-.progress-bar {
+.goal-progress .van-progress {
   flex: 1;
-  height: 12rpx;
-  background: #eeeeee;
-  border-radius: 999rpx;
-  overflow: hidden;
 }
 
-.progress-inner {
-  height: 100%;
-  background: linear-gradient(90deg, #a8e6cf 0%, #5cb894 100%);
-  border-radius: 999rpx;
-}
-
-.progress-text {
-  min-width: 72rpx;
+.prog {
+  font-size: 24rpx;
+  color: #888888;
+  min-width: 80rpx;
   text-align: right;
 }
 
-.mask {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 1000;
+.sub-chips {
+  margin-top: 16rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx dashed #eef2f6;
+}
+
+.sub-label {
+  display: block;
+  font-size: 22rpx;
+  color: #888888;
+  margin-bottom: 8rpx;
+}
+
+.sub-chip-row {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.sub-chip {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 48rpx;
+  gap: 6rpx;
+  background: #f0f7ff;
+  color: #5a8fc7;
+  border-radius: 999rpx;
+  padding: 6rpx 16rpx;
+  font-size: 22rpx;
+  max-width: 100%;
 }
 
-.dialog {
-  width: 100%;
-  max-width: 600rpx;
+.sub-chip-name {
+  max-width: 260rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.dialog-title {
-  display: block;
-  font-size: 32rpx;
-  font-weight: 600;
-  margin-bottom: 20rpx;
-  color: #333333;
+.sub-chip-weight {
+  color: #7ea4c9;
 }
 
-.dialog-body {
-  display: block;
-  font-size: 26rpx;
-  color: #666666;
-  line-height: 1.6;
-  margin-bottom: 32rpx;
-}
-
-.dialog-btn {
-  width: 100%;
+.sub-empty {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #b4bac1;
 }

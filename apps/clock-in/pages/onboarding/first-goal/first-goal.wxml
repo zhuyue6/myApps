@@ -1,0 +1,25 @@
+<view class="page safe-bottom">
+  <van-notice-bar color="#5a8fc7" background="#eef6fc" left-icon="info-o" text="仅填必填项即可开始，其余默认「每日 1 次打卡」。" />
+  <view class="tpls" wx:if="{{templates.length}}">
+    <van-divider content-position="left">推荐模板</van-divider>
+    <view class="tpl-row">
+      <view wx:for="{{templates}}" wx:key="name" class="tpl-hit" mark:ti="{{index}}" bindtap="applyTpl">
+        <van-tag plain type="primary" size="medium">{{item.name}}</van-tag>
+      </view>
+    </view>
+  </view>
+  <van-cell-group inset class="card">
+    <van-field label="目标名称" required placeholder="例如：每日阅读 20 页" value="{{name}}" bind:change="onName" />
+    <van-field label="描述" type="textarea" autosize placeholder="可选" value="{{description}}" bind:change="onDesc" />
+    <picker mode="date" value="{{startDate}}" bindchange="onStartChange">
+      <van-cell title="开始日期" value="{{startDate}}" is-link />
+    </picker>
+    <picker mode="date" value="{{endDate}}" bindchange="onEndChange">
+      <van-cell title="结束日期" value="{{endDate}}" is-link />
+    </picker>
+  </van-cell-group>
+  <view class="row-actions">
+    <van-button plain hairline type="primary" round custom-class="half" bind:click="onSkip">稍后再建</van-button>
+    <van-button type="primary" round custom-class="half" bind:click="onSave">保存并进入</van-button>
+  </view>
+</view>

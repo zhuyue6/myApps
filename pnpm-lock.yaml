@@ -12,6 +12,12 @@ importers:
         specifier: ^2026.1.14
         version: 2026.1.14(zod@4.3.6)
 
+  apps/clock-in:
+    dependencies:
+      '@vant/weapp':
+        specifier: ^1.11.7
+        version: 1.11.7
+
 packages:
 
   '@hono/node-server@1.19.11':
@@ -41,6 +47,9 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@vant/weapp@1.11.7':
+    resolution: {integrity: sha512-Rwn9BBnb4kHSV4XmvBicwtd42J+amEUfnFDcXJsGNPNX4a9c/DoT6YLsm4X1wB2+sQbdiQsbFBLAvGRBxCkD8g==}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -559,6 +568,8 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@vant/weapp@1.11.7': {}
 
   accepts@2.0.0:
     dependencies:

@@ -1,0 +1,35 @@
+.page {
+  padding: 32rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.tpls {
+  margin-bottom: 24rpx;
+}
+
+.tpl-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+
+.tpl-hit {
+  display: inline-flex;
+}
+
+.card {
+  margin-bottom: 24rpx;
+}
+
+.row-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 32rpx;
+}
+
+.half {
+  flex: 1;
+  width: auto !important;
+}

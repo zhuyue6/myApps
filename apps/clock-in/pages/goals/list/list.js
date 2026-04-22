@@ -1,51 +1,80 @@
 /**
- * 主目标列表
+ * 目标列表（首页 tabBar）：默认活跃目标；提供标签管理快捷入口
  */
-const repository = require('../../../utils/repository');
+const api = require('../../../api/index');
+const { statusZh } = require('../../../utils/formatters');
 
 Page({
   data: {
     goals: [],
-    showWelcome: false,
-  },
-
-  onLoad() {
-    const app = getApp();
-    if (app._pendingWelcome) {
-      this.setData({ showWelcome: true });
-    }
+    activeOnly: true,
+    loading: true,
   },
 
   onShow() {
-    this.loadGoals();
+    this.refresh();
   },
 
-  onPullDownRefresh() {
-    this.loadGoals();
-    wx.stopPullDownRefresh();
+  async refresh() {
+    this.setData({ loading: true });
+    try {
+      const [goals, tags] = await Promise.all([
+        api.listGoals({ activeOnly: this.data.activeOnly }),
+        api.listTags(),
+      ]);
+      const tagMap = {};
+      tags.forEach((t) => {
+        tagMap[t.id] = t.name;
+      });
+      const goalMap = {};
+      goals.forEach((g) => {
+        goalMap[g.id] = g;
+      });
+      const decorated = goals.map((g) => {
+        const subs =
+          g.type === 'main' && Array.isArray(g.subLinks)
+            ? g.subLinks.map((l) => ({
+                subGoalId: l.subGoalId,
+                weight: l.weight,
+                subName:
+                  (goalMap[l.subGoalId] && goalMap[l.subGoalId].name) || '已移除的子目标',
+                subStatus:
+                  (goalMap[l.subGoalId] && statusZh(goalMap[l.subGoalId].status)) || '',
+              }))
+            : [];
+        return {
+          ...g,
+          statusZh: statusZh(g.status),
+          tagName: g.tagId ? tagMap[g.tagId] || '' : '',
+          subLinksDisplay: subs,
+        };
+      });
+      this.setData({ goals: decorated, loading: false });
+    } catch (e) {
+      this.setData({ loading: false });
+      wx.showToast({ title: '加载失败', icon: 'none' });
+    }
   },
 
-  loadGoals() {
-    repository.getGoals().forEach((g) => repository.refreshMainGoalStatus(g.id));
-    const goals = repository.getGoals().sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
-    this.setData({ goals });
+  toggleActiveOnly() {
+    this.setData({ activeOnly: !this.data.activeOnly }, () => this.refresh());
   },
 
-  closeWelcome() {
-    repository.setPrefs({ sawWelcome: true });
-    const app = getApp();
-    app._pendingWelcome = false;
-    this.setData({ showWelcome: false });
-  },
-
-  onAddTap() {
+  goAdd() {
     wx.navigateTo({ url: '/pages/goals/edit/edit' });
   },
 
-  onGoalTap(e) {
-    const { id } = e.currentTarget.dataset;
+  goDetail(e) {
+    const id = e.currentTarget.dataset.gid || (e.mark && e.mark.gid);
+    if (!id) return;
     wx.navigateTo({ url: `/pages/goals/detail/detail?id=${id}` });
   },
 
-  noop() {},
+  goTags() {
+    wx.navigateTo({ url: '/pages/tags/manage/manage' });
+  },
+
+  onPullDownRefresh() {
+    this.refresh().then(() => wx.stopPullDownRefresh());
+  },
 });

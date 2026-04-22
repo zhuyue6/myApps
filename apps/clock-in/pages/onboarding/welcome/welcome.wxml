@@ -1,0 +1,7 @@
+<view class="page safe-bottom">
+  <view class="hero card">
+    <text class="title">拆解目标，打卡落地，轻松达成</text>
+    <text class="sub">把长期目标拆成可执行的小动作，用进度与复盘陪你走完全程。</text>
+  </view>
+  <van-button type="primary" block round bind:click="onNext">立即开始</van-button>
+</view>

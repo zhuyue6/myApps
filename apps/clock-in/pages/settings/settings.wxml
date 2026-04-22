@@ -1,0 +1,17 @@
+<view class="page safe-bottom">
+  <van-cell-group inset class="block">
+    <van-cell title="打卡提醒" border="{{false}}" />
+    <van-notice-bar
+      wrapable
+      color="#666666"
+      background="#f6f8fb"
+      text="首次设置提醒时，正式环境需用户授权订阅消息。"
+    />
+    <van-button type="primary" block round custom-class="pad-btn" bind:click="onSubscribe">我了解并记录本地开关</van-button>
+    <van-cell title="当前状态" value="{{reminderAuthorized ? '已标记需要提醒' : '未标记'}}" border="{{false}}" />
+  </van-cell-group>
+  <van-cell-group inset class="block danger-zone">
+    <van-cell title="数据控制" border="{{false}}" />
+    <van-button type="danger" plain hairline block round bind:click="onClear">删除本机全部数据</van-button>
+  </van-cell-group>
+</view>

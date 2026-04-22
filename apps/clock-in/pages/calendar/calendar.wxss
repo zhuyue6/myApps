@@ -1,100 +1,85 @@
 .page {
-  padding: 24rpx 28rpx 120rpx;
+  padding: 24rpx;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.nav-card {
+.today-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx 0 16rpx;
+}
+
+.selected-card {
+  background: #ffffff;
+  border-radius: 18rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 16rpx;
+}
+
+.selected-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20rpx;
+  margin-bottom: 18rpx;
 }
 
-.nav-btn {
-  width: 72rpx;
-  height: 72rpx;
-  line-height: 72rpx;
-  padding: 0;
-  margin: 0;
-  background: #e8f7f0;
-  color: #3d8b6e;
-  border-radius: 16rpx;
-  font-size: 36rpx;
-  border: none;
-}
-
-.nav-title {
-  font-size: 32rpx;
+.selected-date {
+  font-size: 28rpx;
   font-weight: 600;
   color: #333333;
 }
 
-.legend {
+.selected-tag {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+}
+
+.selected-tag.done {
+  color: #ffffff;
+  background: #7ed0a0;
+}
+
+.selected-tag.checked {
+  color: #5a8fc7;
+  background: #dcebfa;
+}
+
+.selected-tag.planned {
+  color: #6a8eb0;
+  background: #eef6fc;
+}
+
+.selected-tag.empty {
+  color: #a0a7b0;
+  background: #f3f5f9;
+}
+
+.selected-body {
   display: flex;
-  align-items: center;
-  gap: 12rpx;
-  margin-bottom: 16rpx;
+  gap: 24rpx;
 }
 
-.dot {
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 50%;
-  background: #5cb894;
-  margin: 8rpx auto 0;
-}
-
-.dot.on {
-  margin: 0;
-}
-
-.week-head {
-  display: flex;
-  margin-bottom: 8rpx;
-}
-
-.wd {
+.stat-col {
   flex: 1;
-  text-align: center;
-  font-size: 24rpx;
-  color: #888888;
-}
-
-.grid {
-  background: #ffffff;
-  border-radius: 20rpx;
-  padding: 16rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
-}
-
-.row {
-  display: flex;
-}
-
-.cell {
-  flex: 1;
-  min-height: 96rpx;
-  text-align: center;
-  padding: 8rpx 0;
+  background: #f6f9fd;
   border-radius: 12rpx;
+  padding: 20rpx;
+  text-align: center;
 }
 
-.cell.empty {
-  visibility: hidden;
-}
-
-.cell.today {
-  background: #e8f7f0;
-}
-
-.day-num {
-  font-size: 26rpx;
-  color: #333333;
-}
-
-.foot {
+.stat-val {
   display: block;
-  margin-top: 24rpx;
-  line-height: 1.5;
-  padding: 0 8rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #5a8fc7;
+}
+
+.stat-lbl {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #888888;
 }

@@ -1,35 +1,126 @@
 <view class="page safe-bottom">
-  <view class="card field-card">
-    <text class="label">名称</text>
-    <input class="input" placeholder="例如：今年通过法考" value="{{name}}" bindinput="onNameInput" maxlength="40" />
+  <view class="section">
+    <view class="sec-head">
+      <text class="sec-title">基础信息</text>
+    </view>
+    <view class="sec-body">
+      <van-cell-group inset="{{false}}" border="{{false}}">
+        <van-cell title="类型" border="{{false}}">
+          <view slot="right-icon" class="type-toggle">
+            <view class="type-opt {{type === 'sub' ? 'type-opt-active' : ''}}" data-v="sub" bindtap="onType">子目标</view>
+            <view class="type-opt {{type === 'main' ? 'type-opt-active' : ''}}" data-v="main" bindtap="onType">主目标</view>
+          </view>
+        </van-cell>
+        <van-field
+          label="名称"
+          required
+          placeholder="目标名称"
+          value="{{name}}"
+          bind:change="onName"
+          maxlength="80"
+        />
+        <van-field
+          label="描述"
+          type="textarea"
+          autosize
+          placeholder="可选"
+          value="{{description}}"
+          bind:change="onDesc"
+        />
+        <picker mode="selector" range="{{tagOptions}}" range-key="name" value="{{tagIndex}}" bindchange="onTagPick">
+          <van-cell title="标签" value="{{tagName}}" is-link border="{{false}}" />
+        </picker>
+      </van-cell-group>
+    </view>
   </view>
-  <view class="card field-card">
-    <text class="label">描述</text>
-    <textarea class="textarea" placeholder="可选：补充说明" value="{{desc}}" bindinput="onDescInput" maxlength="500" />
+
+  <view class="section">
+    <view class="sec-head">
+      <text class="sec-title">时间范围</text>
+    </view>
+    <view class="sec-body">
+      <van-cell-group border="{{false}}">
+        <picker mode="date" value="{{startDate}}" bindchange="onStart">
+          <van-cell title="开始日期" value="{{startDate}}" is-link border="{{false}}" />
+        </picker>
+        <picker mode="date" value="{{endDate}}" bindchange="onEnd">
+          <van-cell title="结束日期" value="{{endDate}}" is-link border="{{false}}" />
+        </picker>
+      </van-cell-group>
+    </view>
   </view>
-  <view class="card field-card">
-    <text class="label">截止日期</text>
-    <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
-      <view class="picker-val">{{endDate || '不设置'}}</view>
-    </picker>
+
+  <view wx:if="{{type === 'sub'}}" class="section">
+    <view class="sec-head">
+      <text class="sec-title">打卡周期</text>
+    </view>
+    <view class="sec-body">
+      <view class="cycle-toggle">
+        <view class="cy-opt {{cycleType === 'day' ? 'cy-active' : ''}}" data-v="0" bindtap="onCyclePick" data-cycle="day">按天（时段）</view>
+        <view class="cy-opt {{cycleType === 'week' ? 'cy-active' : ''}}" data-v="1" bindtap="onCyclePick" data-cycle="week">按周（工作日）</view>
+      </view>
+
+      <view wx:if="{{cycleType === 'day'}}" class="cycle-body">
+        <text class="cycle-hint">每日可设多个打卡时段，当时段内可打卡；每个时段计 1 次。</text>
+        <view wx:for="{{dayTimeWindows}}" wx:key="index" class="time-row">
+          <picker mode="time" value="{{item.from}}" data-idx="{{index}}" bindchange="onWindowFrom">
+            <view class="time-pill">{{item.from}}</view>
+          </picker>
+          <text class="time-dash">至</text>
+          <picker mode="time" value="{{item.to}}" data-idx="{{index}}" bindchange="onWindowTo">
+            <view class="time-pill">{{item.to}}</view>
+          </picker>
+          <view class="time-remove" data-idx="{{index}}" bindtap="onWindowRemove">
+            <van-icon name="close" size="32rpx" color="#c2a0a0" />
+          </view>
+        </view>
+        <view class="time-add" bindtap="onWindowAdd">
+          <van-icon name="plus" size="28rpx" color="#5a8fc7" />
+          <text>添加时段</text>
+        </view>
+      </view>
+
+      <view wx:if="{{cycleType === 'week'}}" class="cycle-body">
+        <text class="cycle-hint">选择每周需要打卡的星期，可多选；命中的当日即为计划日。</text>
+        <van-checkbox-group value="{{weekDays}}" bind:change="onWeekDaysChange">
+          <view class="week-grid">
+            <view wx:for="{{weekOptions}}" wx:key="value" class="week-item">
+              <van-checkbox name="{{item.value}}" shape="square">{{item.label}}</van-checkbox>
+            </view>
+          </view>
+        </van-checkbox-group>
+      </view>
+    </view>
   </view>
-  <view class="card field-card">
-    <text class="label">分类</text>
-    <picker mode="selector" range="{{tags}}" value="{{tagIndex}}" bindchange="onTagChange">
-      <view class="picker-val">{{tags[tagIndex]}}</view>
-    </picker>
+
+  <view wx:if="{{type === 'main'}}" class="section">
+    <view class="sec-head">
+      <text class="sec-title">关联子目标（可选）</text>
+    </view>
+    <view class="sec-body">
+      <text class="cycle-hint">主目标可不关联子目标，关联后权重合计需为 100%。当前合计：{{weightSum}}%</text>
+      <view wx:if="{{subLinksDisplay.length}}" class="sub-preview">
+        <view wx:for="{{subLinksDisplay}}" wx:key="subGoalId" class="sub-pill">
+          <text class="sub-pill-name">{{item.subName}}</text>
+          <text class="sub-pill-weight">{{item.weight}}%</text>
+        </view>
+      </view>
+      <van-button plain hairline type="primary" block round bind:click="goPickSubs" custom-class="link-btn">
+        {{subLinksDisplay.length ? '调整关联与权重' : '选择子目标并设权重'}}
+      </van-button>
+    </view>
   </view>
-  <view class="card field-card">
-    <text class="label">优先级</text>
-    <picker mode="selector" range="{{priorities}}" range-key="label" value="{{priorityIndex}}" bindchange="onPriorityChange">
-      <view class="picker-val">{{priorities[priorityIndex].label}}</view>
-    </picker>
-  </view>
-  <view wx:if="{{id}}" class="card field-card">
-    <text class="label">状态</text>
-    <picker mode="selector" range="{{['进行中','已完成','已过期']}}" value="{{status === 'active' ? 0 : status === 'done' ? 1 : 2}}" bindchange="onStatusChange">
-      <view class="picker-val">{{status === 'done' ? '已完成' : status === 'expired' ? '已过期' : '进行中'}}</view>
-    </picker>
-  </view>
-  <button class="btn-primary save-btn" bindtap="onSave">保存</button>
+
+  <van-button type="primary" block round custom-class="bottom-btn" bind:click="onSave">保存</van-button>
+
+  <van-popup show="{{showTagCreate}}" position="bottom" round closeable bind:close="onNewTagCancel">
+    <view class="new-tag-sheet">
+      <text class="new-tag-title">新建标签</text>
+      <van-field placeholder="请输入标签名称（1-20 字）" value="{{newTagInput}}" bind:change="onNewTagInput" />
+      <view class="new-tag-actions">
+        <van-button plain round block custom-class="half-btn" bind:click="onNewTagCancel">取消</van-button>
+        <van-button type="primary" round block custom-class="half-btn" bind:click="onNewTagConfirm">确定</van-button>
+      </view>
+    </view>
+  </van-popup>
 </view>

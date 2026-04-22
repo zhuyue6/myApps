@@ -1,0 +1,44 @@
+<view class="cal-board">
+  <view class="cal-head">
+    <view class="cal-title">{{headerTitle}}</view>
+    <view class="cal-switchers">
+      <view class="switcher">
+        <view class="sw-btn" bindtap="onPrevYear">
+          <van-icon name="arrow-left" size="28rpx" color="#5a8fc7" />
+        </view>
+        <text class="sw-label">年</text>
+        <view class="sw-btn" bindtap="onNextYear">
+          <van-icon name="arrow" size="28rpx" color="#5a8fc7" />
+        </view>
+      </view>
+      <view class="switcher">
+        <view class="sw-btn" bindtap="onPrevMonth">
+          <van-icon name="arrow-left" size="28rpx" color="#5a8fc7" />
+        </view>
+        <text class="sw-label">月</text>
+        <view class="sw-btn" bindtap="onNextMonth">
+          <van-icon name="arrow" size="28rpx" color="#5a8fc7" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="week-row">
+    <text wx:for="{{weekLabels}}" wx:key="*this" class="week-label">{{item}}</text>
+  </view>
+
+  <view class="day-grid">
+    <block wx:for="{{cells}}" wx:key="key">
+      <view wx:if="{{item.empty}}" class="day-cell day-empty"></view>
+      <view
+        wx:else
+        class="day-cell {{item.isToday ? 'is-today' : ''}} {{item.isSelected ? 'is-selected' : ''}}"
+        data-ymd="{{item.ymd}}"
+        bindtap="onCellTap"
+      >
+        <view class="day-num">{{item.day}}</view>
+        <view wx:if="{{item.markText}}" class="day-mark mark-{{item.markType}}">{{item.markText}}</view>
+      </view>
+    </block>
+  </view>
+</view>

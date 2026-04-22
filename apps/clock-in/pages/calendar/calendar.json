@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "打卡日历"
+  "navigationBarTitleText": "打卡日历",
+  "usingComponents": {
+    "goal-calendar-board": "../../components/goal-calendar-board/goal-calendar-board"
+  }
 }

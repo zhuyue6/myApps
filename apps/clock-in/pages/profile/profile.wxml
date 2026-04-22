@@ -1,0 +1,20 @@
+<view class="page safe-bottom">
+  <van-cell-group inset class="block">
+    <van-cell title="成就墙" border="{{false}}" />
+    <van-cell
+      wx:for="{{achievements}}"
+      wx:key="id"
+      title="{{item.title}}"
+      label="{{item.desc}}"
+      value="{{item.unlocked ? '已解锁' : '未解锁'}}"
+      border="{{false}}"
+    />
+  </van-cell-group>
+  <van-cell-group inset class="block">
+    <van-cell title="数据看板" is-link icon="chart-trending-o" bind:click="goStats" border="{{false}}" />
+    <van-cell title="标签管理" is-link icon="label-o" bind:click="goTags" border="{{false}}" />
+    <van-cell title="归档目标" is-link icon="records-o" bind:click="goArchive" border="{{false}}" />
+    <van-cell title="回收站" is-link icon="delete-o" bind:click="goTrash" border="{{false}}" />
+    <van-cell title="提醒与隐私" is-link icon="setting-o" bind:click="goSettings" border="{{false}}" />
+  </van-cell-group>
+</view>

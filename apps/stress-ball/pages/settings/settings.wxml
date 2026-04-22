@@ -49,7 +49,7 @@
   </view>
 
   <view class="block muted">
-    <text class="fine-print">无失败、无限时、无强制分享。广告与内购相关能力可在后续版本按需接入。</text>
+    <text class="fine-print">无失败、无限时、无强制分享。</text>
   </view>
 
   <custom-tab-bar current="settings" />

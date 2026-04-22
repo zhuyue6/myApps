@@ -1,0 +1,15 @@
+<view class="page safe-bottom">
+  <van-cell-group inset>
+    <van-cell
+      wx:for="{{goals}}"
+      wx:key="id"
+      title="{{item.name}}"
+      value="{{item.statusZh}} · {{item.progress || 0}}%"
+      is-link
+      mark:aid="{{item.id}}"
+      bind:click="open"
+      border="{{false}}"
+    />
+  </van-cell-group>
+  <van-empty wx:if="{{!goals.length}}" description="暂无归档" />
+</view>

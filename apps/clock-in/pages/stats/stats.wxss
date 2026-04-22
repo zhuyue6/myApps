@@ -1,0 +1,100 @@
+.page {
+  padding: 24rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.stat-inner {
+  text-align: center;
+  padding: 28rpx 12rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.num {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #5a8fc7;
+}
+
+.lbl {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.tag-stats {
+  margin-top: 24rpx;
+  background: #ffffff;
+  border-radius: 18rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.05);
+}
+
+.tag-stats-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.stats-title {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.stats-sub {
+  font-size: 22rpx;
+  color: #a0a7b0;
+}
+
+.tag-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}
+
+.tag-stats-row {
+  padding: 8rpx 0;
+  border-bottom: 1rpx solid #f3f5f9;
+}
+
+.tag-stats-row:last-child {
+  border-bottom: none;
+}
+
+.tag-row-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.tag-name {
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.tag-count {
+  font-size: 24rpx;
+  color: #888888;
+}
+
+.tag-row-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.tag-row-bar .van-progress {
+  flex: 1;
+}
+
+.tag-rate {
+  font-size: 22rpx;
+  color: #5a8fc7;
+  min-width: 80rpx;
+  text-align: right;
+}

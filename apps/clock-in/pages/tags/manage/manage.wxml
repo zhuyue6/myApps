@@ -1,0 +1,77 @@
+<view class="page safe-bottom">
+  <view class="card">
+    <van-field
+      label="新建"
+      placeholder="输入标签名称"
+      value="{{name}}"
+      bind:change="onName"
+      clearable
+    >
+      <van-button slot="button" type="primary" size="small" round bind:click="onAdd">添加</van-button>
+    </van-field>
+  </view>
+
+  <view class="sec-title">
+    <text>预设标签</text>
+    <text class="sec-title-tip">系统预置，可隐藏，不可重命名</text>
+  </view>
+  <view class="card tag-list">
+    <block wx:for="{{presets}}" wx:key="id">
+      <view class="tag-row">
+        <view class="tag-info">
+          <van-tag plain type="primary" size="medium" custom-class="tag-chip">{{item.name}}</van-tag>
+          <text class="tag-sub">系统</text>
+        </view>
+        <van-button size="mini" plain data-id="{{item.id}}" data-type="preset" bind:click="onDelete">隐藏</van-button>
+      </view>
+    </block>
+    <view wx:if="{{!presets.length}}" class="tag-empty">预设标签全部已隐藏</view>
+  </view>
+
+  <view class="sec-title">
+    <text>自定义标签</text>
+    <text class="sec-title-tip">可随时增删改</text>
+  </view>
+  <view class="card tag-list">
+    <block wx:for="{{customs}}" wx:key="id">
+      <view class="tag-row">
+        <view class="tag-info">
+          <van-tag plain type="primary" size="medium" custom-class="tag-chip">{{item.name}}</van-tag>
+        </view>
+        <view class="tag-actions">
+          <van-button size="mini" plain data-id="{{item.id}}" data-name="{{item.name}}" bind:click="onRename">重命名</van-button>
+          <van-button size="mini" plain type="danger" data-id="{{item.id}}" data-type="custom" bind:click="onDelete">删除</van-button>
+        </view>
+      </view>
+    </block>
+    <view wx:if="{{!customs.length}}" class="tag-empty">暂无自定义标签</view>
+  </view>
+
+  <view wx:if="{{hiddenPresets.length}}">
+    <view class="sec-title">
+      <text>隐藏的预设</text>
+      <text class="sec-title-tip">点击即可恢复</text>
+    </view>
+    <view class="card tag-list">
+      <block wx:for="{{hiddenPresets}}" wx:key="id">
+        <view class="tag-row">
+          <view class="tag-info">
+            <van-tag plain type="default" size="medium" custom-class="tag-chip">{{item.name}}</van-tag>
+          </view>
+          <van-button size="mini" plain type="primary" data-id="{{item.id}}" bind:click="onRestore">恢复</van-button>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <van-popup show="{{showEdit}}" position="bottom" round closeable bind:close="onEditCancel">
+    <view class="edit-sheet">
+      <text class="edit-title">重命名标签</text>
+      <van-field placeholder="请输入新的名称" value="{{editName}}" bind:change="onEditNameInput" />
+      <view class="edit-actions">
+        <van-button plain round block custom-class="half-btn" bind:click="onEditCancel">取消</van-button>
+        <van-button type="primary" round block custom-class="half-btn" bind:click="onEditConfirm">保存</van-button>
+      </view>
+    </view>
+  </van-popup>
+</view>

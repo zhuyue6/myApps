@@ -1,25 +1,21 @@
 /**
- * 《目标打卡》小程序入口
- * 核心能力本地可用；订阅消息 / 公众号推送须按平台规则配置模板与服务端
+ * 《目标打卡》小程序入口：本地存储 + 标准 API，便于后续切换后端
  */
-const repository = require('./utils/repository');
-const { tryShowOneInAppReminder } = require('./utils/inAppReminder');
+const clockInApi = require('./api/index');
 
 App({
   onLaunch() {
-    repository.initIfNeeded();
-    const prefs = repository.getPrefs();
-    if (!prefs.sawWelcome) {
-      this._pendingWelcome = true;
-    }
+    clockInApi.bootstrap().catch((e) => {
+      console.error('bootstrap', e);
+    });
   },
+
   onShow() {
-    const goals = repository.getGoals();
-    goals.forEach((g) => repository.refreshMainGoalStatus(g.id));
-    tryShowOneInAppReminder();
+    clockInApi.onAppShow().catch(() => {});
   },
+
   globalData: {
-    /** 是否在首页展示首次合规说明弹层 */
-    pendingWelcome: false,
+    /** @type {ReturnType<typeof require>} */
+    api: clockInApi,
   },
 });

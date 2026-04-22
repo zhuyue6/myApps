@@ -1,0 +1,39 @@
+<view class="page safe-bottom" wx:if="{{goal}}">
+  <van-cell-group inset class="card-block">
+    <van-cell title="{{goal.name}}" label="{{statusZh}} · 进度 {{goal.progress || 0}}%" border="{{false}}" />
+    <van-cell
+      wx:if="{{goal.finalizedRate != null}}"
+      title="锁定完成率"
+      value="{{goal.finalizedRate}}%"
+      border="{{false}}"
+    />
+  </van-cell-group>
+
+  <van-cell-group wx:if="{{goal.status === 'incomplete'}}" inset class="card-block">
+    <van-cell title="未完成复盘（探索版简化）" border="{{false}}" />
+    <van-field label="核心原因" placeholder="如：执行力不足" value="{{finalReason}}" bind:change="onFinalReason" />
+    <van-field label="补充说明" type="textarea" autosize placeholder="选填" value="{{finalDetail}}" bind:change="onFinalDetail" />
+    <picker mode="selector" range="{{intentOptions}}" value="{{intentIndex}}" bindchange="onIntent">
+      <van-cell title="后续意向" value="{{intentOptions[intentIndex]}}" is-link border="{{false}}" />
+    </picker>
+    <van-button type="primary" block round custom-class="mt" bind:click="submitFinalFeedback">提交复盘</van-button>
+  </van-cell-group>
+
+  <van-cell-group wx:if="{{feedbacks.length}}" inset class="card-block">
+    <van-cell title="反馈记录" border="{{false}}" />
+    <van-cell
+      wx:for="{{feedbacks}}"
+      wx:key="id"
+      title="{{item.kind}}"
+      label="{{item.presetReason}} {{item.text}}"
+      border="{{false}}"
+    />
+  </van-cell-group>
+
+  <van-cell-group inset class="card-block">
+    <van-field label="复盘笔记" type="textarea" autosize placeholder="经验总结、反思…" value="{{note}}" bind:change="onNote" />
+    <van-button plain hairline type="primary" block round custom-class="mt" bind:click="saveNote">保存笔记</van-button>
+  </van-cell-group>
+
+  <van-button type="primary" block round bind:click="reuse">复用此目标配置</van-button>
+</view>

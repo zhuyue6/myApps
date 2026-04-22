@@ -1,0 +1,133 @@
+.cal-board {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.05);
+}
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.cal-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #333333;
+  letter-spacing: 2rpx;
+}
+
+.cal-switchers {
+  display: flex;
+  gap: 16rpx;
+}
+
+.switcher {
+  display: flex;
+  align-items: center;
+  background: #f3f7fc;
+  border-radius: 999rpx;
+  padding: 4rpx 12rpx;
+}
+
+.sw-btn {
+  padding: 8rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sw-label {
+  font-size: 24rpx;
+  color: #5a8fc7;
+  padding: 0 10rpx;
+  font-weight: 500;
+}
+
+.week-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0 0 12rpx;
+  border-bottom: 1rpx solid #f0f3f7;
+}
+
+.week-label {
+  text-align: center;
+  font-size: 24rpx;
+  color: #a0a7b0;
+  padding: 6rpx 0;
+}
+
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4rpx;
+  padding-top: 8rpx;
+}
+
+.day-cell {
+  min-height: 96rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10rpx 4rpx 6rpx;
+  border-radius: 12rpx;
+  transition: background 0.15s;
+}
+
+.day-empty {
+  background: transparent;
+}
+
+.day-cell.is-today .day-num {
+  color: #ffffff;
+  background: #7ec8e3;
+}
+
+.day-cell.is-selected {
+  background: #eef6fc;
+}
+
+.day-num {
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  border-radius: 999rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.day-mark {
+  margin-top: 6rpx;
+  font-size: 18rpx;
+  line-height: 1.2;
+  padding: 2rpx 8rpx;
+  border-radius: 8rpx;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mark-planned {
+  color: #6a8eb0;
+  background: #eef6fc;
+}
+
+.mark-checked {
+  color: #5a8fc7;
+  background: #dcebfa;
+  font-weight: 500;
+}
+
+.mark-done {
+  color: #ffffff;
+  background: #7ed0a0;
+  font-weight: 600;
+}

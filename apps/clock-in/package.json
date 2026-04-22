@@ -1,0 +1,8 @@
+{
+  "name": "clock-in",
+  "private": true,
+  "description": "目标打卡小程序（构建 npm 时使用本目录为 miniprogram 根）",
+  "dependencies": {
+    "@vant/weapp": "^1.11.7"
+  }
+}
