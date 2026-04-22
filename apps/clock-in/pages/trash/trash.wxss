@@ -1,13 +1,1 @@
-.page {
-  padding: 24rpx;
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-.trash-btns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
-  justify-content: flex-end;
-  align-items: center;
-}
+/* 占位页专用样式交由 coming-soon 组件管理 */

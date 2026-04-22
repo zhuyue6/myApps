@@ -1,17 +1,126 @@
 <view class="page safe-bottom">
-  <van-cell-group inset class="block">
-    <van-cell title="打卡提醒" border="{{false}}" />
-    <van-notice-bar
-      wrapable
-      color="#666666"
-      background="#f6f8fb"
-      text="首次设置提醒时，正式环境需用户授权订阅消息。"
-    />
-    <van-button type="primary" block round custom-class="pad-btn" bind:click="onSubscribe">我了解并记录本地开关</van-button>
-    <van-cell title="当前状态" value="{{reminderAuthorized ? '已标记需要提醒' : '未标记'}}" border="{{false}}" />
-  </van-cell-group>
-  <van-cell-group inset class="block danger-zone">
-    <van-cell title="数据控制" border="{{false}}" />
-    <van-button type="danger" plain hairline block round bind:click="onClear">删除本机全部数据</van-button>
-  </van-cell-group>
+  <!-- 顶部概览卡 -->
+  <view class="hero">
+    <view class="hero__icon">
+      <van-icon name="bell" color="#ffffff" size="44rpx" />
+    </view>
+    <view class="hero__body">
+      <view class="hero__title">让坚持有节奏</view>
+      <view class="hero__sub">每日温柔提醒，帮你把习惯种进生活里</view>
+    </view>
+    <view class="hero__status {{reminderAuthorized ? 'hero__status--on' : 'hero__status--off'}}">
+      <view class="hero__dot"></view>
+      <text>{{reminderAuthorized ? '已开启' : '未开启'}}</text>
+    </view>
+  </view>
+
+  <!-- 打卡提醒 -->
+  <view class="section">
+    <view class="section__head">
+      <view class="section__title">打卡提醒</view>
+      <view class="section__hint">订阅消息由微信统一管理，仅作一次性提醒</view>
+    </view>
+
+    <view class="card">
+      <view class="row">
+        <view class="row__icon row__icon--blue">
+          <van-icon name="bell" size="32rpx" color="#5a8fc7" />
+        </view>
+        <view class="row__main">
+          <view class="row__title">每日打卡提醒</view>
+          <view class="row__desc">到点悄悄提醒你记录今天</view>
+        </view>
+        <van-switch
+          checked="{{ reminderAuthorized }}"
+          size="44rpx"
+          active-color="#7ec8e3"
+          bind:change="onToggleReminder"
+        />
+      </view>
+
+      <view class="divider"></view>
+
+      <view class="row row--tappable" bind:tap="onSubscribe">
+        <view class="row__icon row__icon--mint">
+          <van-icon name="chat-o" size="32rpx" color="#4fb3a4" />
+        </view>
+        <view class="row__main">
+          <view class="row__title">授权订阅消息</view>
+          <view class="row__desc">点击唤起微信授权，首次需同意</view>
+        </view>
+        <van-icon name="arrow" size="28rpx" color="#b8c3d1" />
+      </view>
+    </view>
+
+    <view class="tip-bar" wx:if="{{!reminderAuthorized}}">
+      <van-icon name="info-o" size="28rpx" color="#c59a44" />
+      <text class="tip-bar__text">尚未开启提醒，打开后会在安静时段温柔陪伴你</text>
+    </view>
+  </view>
+
+  <!-- 隐私保护 -->
+  <view class="section">
+    <view class="section__head">
+      <view class="section__title">隐私保护</view>
+      <view class="section__hint">我们只在你的设备上保存数据</view>
+    </view>
+
+    <view class="card">
+      <view class="info">
+        <view class="info__icon">
+          <van-icon name="shield-o" size="36rpx" color="#5a8fc7" />
+        </view>
+        <view class="info__body">
+          <view class="info__title">本地存储，离线可用</view>
+          <view class="info__desc">所有目标与打卡记录仅保存在你的手机本地，不会上传任何服务器。</view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <view class="info">
+        <view class="info__icon info__icon--pink">
+          <van-icon name="like-o" size="36rpx" color="#e89bb3" />
+        </view>
+        <view class="info__body">
+          <view class="info__title">不收集个人信息</view>
+          <view class="info__desc">不会请求通讯录、位置等敏感权限，仅使用订阅消息下发提醒。</view>
+        </view>
+      </view>
+
+      <view class="divider"></view>
+
+      <view class="info info--tappable" bind:tap="onViewPolicy">
+        <view class="info__icon info__icon--mint">
+          <van-icon name="description" size="36rpx" color="#4fb3a4" />
+        </view>
+        <view class="info__body">
+          <view class="info__title">隐私说明</view>
+          <view class="info__desc">了解我们如何处理你的打卡数据</view>
+        </view>
+        <van-icon name="arrow" size="28rpx" color="#b8c3d1" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 危险操作 -->
+  <view class="section">
+    <view class="section__head">
+      <view class="section__title section__title--danger">数据控制</view>
+      <view class="section__hint">清除后无法恢复，请谨慎操作</view>
+    </view>
+
+    <view class="danger-card" bind:tap="onClear">
+      <view class="danger-card__icon">
+        <van-icon name="delete-o" size="36rpx" color="#e57373" />
+      </view>
+      <view class="danger-card__body">
+        <view class="danger-card__title">删除本机全部数据</view>
+        <view class="danger-card__desc">一次性清空目标、打卡与偏好设置</view>
+      </view>
+      <van-icon name="arrow" size="28rpx" color="#e57373" />
+    </view>
+  </view>
+
+  <view class="footer">陪你一起，慢一点，也走得久一点</view>
 </view>

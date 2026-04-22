@@ -1,26 +1,13 @@
 /**
- * 归档目标列表
+ * 归档目标（占位版）
+ * 功能开发中，先以通用占位页呈现，避免空态带来的困惑。
  */
-const api = require('../../../api/index');
-const { statusZh } = require('../../../utils/formatters');
-
 Page({
-  data: { goals: [] },
-
-  onShow() {
-    this.load();
-  },
-
-  async load() {
-    const goals = await api.listGoals({ archiveOnly: true });
-    this.setData({
-      goals: goals.map((g) => ({ ...g, statusZh: statusZh(g.status) })),
-    });
-  },
-
-  open(e) {
-    const id = e.mark && e.mark.aid;
-    if (!id) return;
-    wx.navigateTo({ url: `/pages/goals/detail/detail?id=${id}` });
+  data: {
+    tips: [
+      '将已完成或长期不用的目标安静收好',
+      '随时可重新激活，不会丢失任何历史打卡',
+      '支持按归档时间、标签回顾过往里程碑',
+    ],
   },
 });

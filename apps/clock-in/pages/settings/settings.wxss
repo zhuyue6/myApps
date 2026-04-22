@@ -1,17 +1,314 @@
 .page {
-  padding: 24rpx;
+  padding: 24rpx 24rpx 40rpx;
   min-height: 100vh;
   box-sizing: border-box;
+  background: linear-gradient(180deg, #eef6fc 0%, #f6f8fb 260rpx);
 }
 
-.block {
-  margin-bottom: 24rpx;
+/* 顶部概览卡 */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx 28rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(135deg, #a8d8ff 0%, #7ec8e3 100%);
+  color: #ffffff;
+  box-shadow: 0 16rpx 32rpx rgba(122, 162, 204, 0.22);
+  margin-bottom: 32rpx;
+  overflow: hidden;
 }
 
-.pad-btn {
-  margin: 16rpx 0;
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -40rpx;
+  top: -40rpx;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
 }
 
-.danger-zone {
+.hero__icon {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 22rpx;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  backdrop-filter: blur(6rpx);
+}
+
+.hero__body {
+  flex: 1;
+  min-width: 0;
+  z-index: 1;
+}
+
+.hero__title {
+  font-size: 34rpx;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 1rpx;
+}
+
+.hero__sub {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  opacity: 0.88;
+  line-height: 1.5;
+}
+
+.hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  z-index: 1;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.hero__dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #ffd2c5;
+  box-shadow: 0 0 0 4rpx rgba(255, 210, 197, 0.3);
+}
+
+.hero__status--on .hero__dot {
+  background: #b6f0c6;
+  box-shadow: 0 0 0 4rpx rgba(182, 240, 198, 0.35);
+  animation: dot-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4rpx rgba(182, 240, 198, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 10rpx rgba(182, 240, 198, 0);
+  }
+}
+
+/* 区块 */
+.section {
+  margin-bottom: 32rpx;
+}
+
+.section__head {
+  padding: 0 8rpx 16rpx;
+}
+
+.section__title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2f4a66;
+  letter-spacing: 1rpx;
+}
+
+.section__title--danger {
+  color: #c85a5a;
+}
+
+.section__hint {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #8a99ad;
+  line-height: 1.5;
+}
+
+/* 通用卡片 */
+.card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 8rpx 28rpx;
+  box-shadow: 0 8rpx 24rpx rgba(122, 162, 204, 0.08);
+}
+
+/* 行（带开关 / 带箭头） */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx 0;
+}
+
+.row--tappable:active {
+  opacity: 0.7;
+}
+
+.row__icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.row__icon--blue {
+  background: #eef6fc;
+}
+
+.row__icon--mint {
+  background: #e6f5f2;
+}
+
+.row__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.row__title {
+  font-size: 28rpx;
+  color: #2f4a66;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.row__desc {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #8a99ad;
+  line-height: 1.5;
+}
+
+.divider {
+  height: 1rpx;
+  background: #f0f3f8;
+  margin-left: 84rpx;
+}
+
+/* 信息行（隐私说明） */
+.info {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx 0;
+}
+
+.info--tappable:active {
+  opacity: 0.7;
+}
+
+.info__icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  background: #eef6fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info__icon--pink {
+  background: #fdedf2;
+}
+
+.info__icon--mint {
+  background: #e6f5f2;
+}
+
+.info__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.info__title {
+  font-size: 28rpx;
+  color: #2f4a66;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.info__desc {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #8a99ad;
+  line-height: 1.6;
+}
+
+/* 温馨提示条 */
+.tip-bar {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
   margin-top: 16rpx;
+  padding: 16rpx 20rpx;
+  background: #fff7e6;
+  border-radius: 16rpx;
+}
+
+.tip-bar__text {
+  flex: 1;
+  font-size: 22rpx;
+  color: #a57a24;
+  line-height: 1.5;
+}
+
+/* 危险卡片 */
+.danger-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 28rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+  border: 2rpx solid #fde4e4;
+  box-shadow: 0 8rpx 24rpx rgba(229, 115, 115, 0.08);
+}
+
+.danger-card:active {
+  opacity: 0.8;
+  background: #fff7f7;
+}
+
+.danger-card__icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  background: #fdecec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.danger-card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.danger-card__title {
+  font-size: 28rpx;
+  color: #c85a5a;
+  font-weight: 500;
+}
+
+.danger-card__desc {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #b47575;
+  line-height: 1.5;
+}
+
+.footer {
+  margin-top: 40rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #a8b5c4;
+  letter-spacing: 2rpx;
 }

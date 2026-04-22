@@ -1,0 +1,35 @@
+<view class="coming-soon safe-bottom">
+  <view class="coming-soon__card">
+    <view class="coming-soon__emoji-wrap">
+      <view class="coming-soon__emoji">{{emoji}}</view>
+      <view class="coming-soon__ring coming-soon__ring--1"></view>
+      <view class="coming-soon__ring coming-soon__ring--2"></view>
+    </view>
+
+    <view class="coming-soon__badge">
+      <van-icon name="clock-o" size="24rpx" color="#5a8fc7" />
+      <text class="coming-soon__badge-text">即将上线</text>
+    </view>
+
+    <view class="coming-soon__title">{{title}}</view>
+    <view class="coming-soon__desc">{{desc}}</view>
+
+    <view class="coming-soon__tips" wx:if="{{tips && tips.length}}">
+      <view class="coming-soon__tip" wx:for="{{tips}}" wx:key="*this">
+        <view class="coming-soon__tip-dot"></view>
+        <text class="coming-soon__tip-text">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="coming-soon__actions">
+      <van-button
+        type="primary"
+        round
+        block
+        custom-class="coming-soon__btn-primary"
+        bind:click="onBack"
+      >先回上一页</van-button>
+      <view class="coming-soon__subtle" bind:tap="onFeedback">有建议？告诉我们</view>
+    </view>
+  </view>
+</view>

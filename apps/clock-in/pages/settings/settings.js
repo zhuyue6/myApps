@@ -1,5 +1,6 @@
 /**
- * 订阅提醒（探索版说明）与清除本地数据
+ * 提醒与隐私
+ * 订阅提醒偏好开关 + 隐私说明 + 本地数据控制
  */
 const api = require('../../api/index');
 
@@ -14,25 +15,58 @@ Page({
     });
   },
 
+  onToggleReminder(e) {
+    const next = !!e.detail;
+    if (next) {
+      this.enableReminder();
+    } else {
+      this.disableReminder();
+    }
+  },
+
   onSubscribe() {
+    this.enableReminder();
+  },
+
+  enableReminder() {
     wx.showModal({
-      title: '打卡提醒',
+      title: '开启打卡提醒',
       content:
-        '正式版需在小程序后台配置订阅消息模板后，在此调用 wx.requestSubscribeMessage。探索版仅记录本地开关。',
+        '正式版会调用微信订阅消息为你下发一次性提醒。探索版仅在本地记录你的偏好。',
+      confirmText: '好的',
+      cancelText: '再想想',
       success: (r) => {
         if (!r.confirm) return;
         api.updateSettings({ reminderAuthorized: true }).then(() => {
           this.setData({ reminderAuthorized: true });
-          wx.showToast({ title: '已记录偏好', icon: 'none' });
+          wx.showToast({ title: '已开启提醒', icon: 'success' });
         });
       },
+    });
+  },
+
+  disableReminder() {
+    api.updateSettings({ reminderAuthorized: false }).then(() => {
+      this.setData({ reminderAuthorized: false });
+      wx.showToast({ title: '已关闭提醒', icon: 'none' });
+    });
+  },
+
+  onViewPolicy() {
+    wx.showModal({
+      title: '隐私说明',
+      content:
+        '本小程序所有目标、打卡与偏好仅保存在你的设备本地，不会上传服务器，不会收集任何个人敏感信息。订阅消息仅用于你主动授权的提醒。',
+      confirmText: '我知道了',
+      showCancel: false,
     });
   },
 
   onClear() {
     wx.showModal({
       title: '清除全部数据',
-      content: '不可恢复，确定清除本机所有目标与打卡记录？',
+      content: '此操作不可恢复，确定清除本机所有目标与打卡记录？',
+      confirmColor: '#e57373',
       success: (r) => {
         if (!r.confirm) return;
         api.clearAllData().then(() => {

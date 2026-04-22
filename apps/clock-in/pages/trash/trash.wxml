@@ -1,11 +1,6 @@
-<view class="page safe-bottom">
-  <van-cell-group inset>
-    <van-cell wx:for="{{goals}}" wx:key="id" title="{{item.name}}" border="{{false}}">
-      <view slot="right-icon" class="trash-btns">
-        <van-button size="mini" round mark:rid="{{item.id}}" bind:click="onRestore">恢复</van-button>
-        <van-button type="danger" plain hairline size="mini" round mark:pid="{{item.id}}" bind:click="onPurge">清除</van-button>
-      </view>
-    </van-cell>
-  </van-cell-group>
-  <van-empty wx:if="{{!goals.length}}" description="回收站为空" />
-</view>
+<coming-soon
+  emoji="🗑️"
+  title="回收站正在筹备"
+  desc="稍后删除的目标会先在这里停留一段时间，让你有反悔的机会，再决定是否彻底告别。"
+  tips="{{tips}}"
+/>

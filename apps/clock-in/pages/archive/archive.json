@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "归档目标"
+  "navigationBarTitleText": "归档目标",
+  "usingComponents": {
+    "coming-soon": "/components/coming-soon/coming-soon"
+  }
 }

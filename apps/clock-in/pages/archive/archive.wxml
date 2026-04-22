@@ -1,15 +1,6 @@
-<view class="page safe-bottom">
-  <van-cell-group inset>
-    <van-cell
-      wx:for="{{goals}}"
-      wx:key="id"
-      title="{{item.name}}"
-      value="{{item.statusZh}} · {{item.progress || 0}}%"
-      is-link
-      mark:aid="{{item.id}}"
-      bind:click="open"
-      border="{{false}}"
-    />
-  </van-cell-group>
-  <van-empty wx:if="{{!goals.length}}" description="暂无归档" />
-</view>
+<coming-soon
+  emoji="📦"
+  title="归档目标即将登场"
+  desc="我们正在为你的「已完成 / 已暂停」目标准备一个温柔的收纳处，让过往的坚持有迹可循。"
+  tips="{{tips}}"
+/>

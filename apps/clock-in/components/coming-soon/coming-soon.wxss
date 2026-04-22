@@ -1,0 +1,164 @@
+.coming-soon {
+  min-height: 100vh;
+  padding: 48rpx 32rpx 32rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: linear-gradient(180deg, #eef6fc 0%, #f6f8fb 60%);
+}
+
+.coming-soon__card {
+  width: 100%;
+  max-width: 640rpx;
+  background: #ffffff;
+  border-radius: 28rpx;
+  padding: 56rpx 40rpx 40rpx;
+  box-shadow: 0 16rpx 40rpx rgba(122, 162, 204, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.coming-soon__emoji-wrap {
+  position: relative;
+  width: 220rpx;
+  height: 220rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+
+.coming-soon__emoji {
+  font-size: 110rpx;
+  line-height: 1;
+  animation: cs-float 3.6s ease-in-out infinite;
+}
+
+.coming-soon__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2rpx dashed rgba(126, 200, 227, 0.55);
+  animation: cs-spin 18s linear infinite;
+}
+
+.coming-soon__ring--1 {
+  width: 180rpx;
+  height: 180rpx;
+  border-color: rgba(126, 200, 227, 0.45);
+}
+
+.coming-soon__ring--2 {
+  width: 220rpx;
+  height: 220rpx;
+  border-color: rgba(168, 216, 255, 0.4);
+  animation-duration: 26s;
+  animation-direction: reverse;
+}
+
+.coming-soon__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 20rpx;
+  background: #eef6fc;
+  color: #5a8fc7;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  margin-bottom: 20rpx;
+}
+
+.coming-soon__badge-text {
+  font-weight: 500;
+  letter-spacing: 1rpx;
+}
+
+.coming-soon__title {
+  font-size: 38rpx;
+  font-weight: 600;
+  color: #2f4a66;
+  margin-bottom: 14rpx;
+}
+
+.coming-soon__desc {
+  font-size: 26rpx;
+  color: #6b7c93;
+  line-height: 1.7;
+  margin-bottom: 32rpx;
+  max-width: 520rpx;
+}
+
+.coming-soon__tips {
+  width: 100%;
+  background: #f6f9fd;
+  border-radius: 20rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 36rpx;
+  text-align: left;
+}
+
+.coming-soon__tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+  padding: 10rpx 0;
+  font-size: 24rpx;
+  color: #5a6b80;
+  line-height: 1.6;
+}
+
+.coming-soon__tip-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #7ec8e3;
+  margin-top: 12rpx;
+  flex-shrink: 0;
+}
+
+.coming-soon__tip-text {
+  flex: 1;
+}
+
+.coming-soon__actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.coming-soon__btn-primary {
+  background: linear-gradient(135deg, #a8d8ff 0%, #7ec8e3 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+.coming-soon__subtle {
+  font-size: 24rpx;
+  color: #8a99ad;
+  padding: 10rpx 20rpx;
+}
+
+.coming-soon__subtle:active {
+  opacity: 0.6;
+}
+
+@keyframes cs-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12rpx);
+  }
+}
+
+@keyframes cs-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
