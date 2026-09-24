@@ -1,0 +1,12 @@
+<view class="tab-bar" wx:if="{{!hidden}}">
+  <view
+    class="tab {{selected === index ? 'on' : ''}}"
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    data-index="{{index}}"
+    bindtap="onTap"
+  >
+    <van-icon name="{{item.icon}}" size="22px" color="{{selected === index ? '#5a8fc7' : '#8a99ad'}}" />
+    <text>{{item.text}}</text>
+  </view>
+</view>

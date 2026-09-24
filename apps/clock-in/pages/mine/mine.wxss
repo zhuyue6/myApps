@@ -1,0 +1,90 @@
+.profile {
+  padding-top: 36rpx;
+  text-align: center;
+}
+
+.avatar {
+  width: 152rpx;
+  height: 152rpx;
+  border-radius: 50%;
+  margin: 0 auto 20rpx;
+  background: linear-gradient(180deg, #d7e9f8, #c5daf0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 6rpx #ffffff;
+}
+
+.nick {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1c2834;
+}
+
+.edit {
+  font-size: 24rpx;
+  color: #5a8fc7;
+  font-weight: 600;
+  background: #e8f3fb;
+  border-radius: 16rpx;
+  padding: 4rpx 12rpx;
+}
+
+.stats {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 36rpx;
+  text-align: center;
+}
+
+.stat {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 28rpx;
+  box-shadow: 0 8rpx 28rpx rgba(40, 70, 100, 0.06);
+  padding: 28rpx 8rpx 24rpx;
+}
+
+.num {
+  display: block;
+  font-size: 52rpx;
+  line-height: 1.1;
+  font-weight: 600;
+}
+
+.num.ongoing {
+  color: #3f74ad;
+}
+
+.num.done {
+  color: #2f9e6b;
+}
+
+.num.expired {
+  color: #c48a3a;
+}
+
+.stat-label {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #6d7b8a;
+}
+
+.note {
+  margin: 32rpx 8rpx 0;
+  color: #8b98a8;
+  font-size: 24rpx;
+  line-height: 1.6;
+  text-align: left;
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
+}
+
+.nick-help {
+  padding: 16rpx 0 0;
+}

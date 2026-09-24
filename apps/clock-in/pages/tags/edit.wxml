@@ -1,0 +1,52 @@
+<view class="page with-action">
+  <view class="group">
+    <view class="cell" bindtap="onToggleTypes">
+      <view class="label">标签类型<text class="req">*</text></view>
+      <view class="val {{form.type ? '' : 'ph'}}">{{form.type || '选择已有类型'}}</view>
+      <text class="chev">›</text>
+    </view>
+    <view class="drop" wx:if="{{showTypes}}">
+      <view
+        class="option {{form.type === item ? 'on' : ''}}"
+        wx:for="{{types}}"
+        wx:key="*this"
+        data-type="{{item}}"
+        bindtap="onSelectType"
+      >
+        <text>{{item}}</text>
+        <view class="check"></view>
+      </view>
+    </view>
+
+    <view class="cell no-line">
+      <view class="label">新建类型</view>
+      <input
+        class="field"
+        value="{{form.newType}}"
+        placeholder="{{newTypePlaceholder}}"
+        placeholder-class="ph"
+        bindinput="onNewType"
+        cursor-spacing="80"
+      />
+    </view>
+    <view class="help" wx:if="{{!errors.type}}">选择已有类型，或输入一个新类型。填写新类型时，以新类型为准。</view>
+    <view class="err" wx:if="{{errors.type}}">{{errors.type}}</view>
+
+    <view class="cell no-line">
+      <view class="label">标签名称<text class="req">*</text></view>
+      <input
+        class="field"
+        value="{{form.name}}"
+        placeholder="请输入名称"
+        placeholder-class="ph"
+        bindinput="onName"
+        cursor-spacing="80"
+      />
+    </view>
+    <view class="err" wx:if="{{errors.name}}">{{errors.name}}</view>
+  </view>
+</view>
+
+<view class="action-bar solo">
+  <button class="btn" hover-class="btn-hover" bindtap="onSave">保存</button>
+</view>

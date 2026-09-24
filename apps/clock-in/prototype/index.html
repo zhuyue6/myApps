@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>目标打卡 0.1 原型</title>
+<style>
+  :root {
+    --primary: #5a8fc7;
+    --primary-dark: #3f74ad;
+    --nav: #e8f4fc;
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --text: #1c2834;
+    --sub: #6d7b8a;
+    --hint: #8b98a8;
+    --line: #eef1f5;
+    --soft: #f3f6fa;
+    --green: #2f9e6b;
+    --green-bg: #e8f7ef;
+    --amber: #c48a3a;
+    --amber-bg: #fbf4e8;
+    --blue-bg: #e8f3fb;
+    --danger: #d9655b;
+    --shadow: 0 4px 14px rgba(40, 70, 100, 0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    color: var(--text);
+    background: #dfe7ef;
+  }
+  button, input { font-family: inherit; }
+  body.single { background: var(--bg); width: 390px; height: 844px; overflow: hidden; }
+  body.gallery { padding: 28px 32px 48px; }
+  .page-title { margin: 0 0 6px; font-size: 22px; font-weight: 650; }
+  .page-desc { margin: 0 0 22px; color: var(--sub); font-size: 14px; line-height: 1.6; }
+  .gallery { display: flex; flex-wrap: wrap; gap: 28px 22px; }
+  .shot h2 { margin: 10px 0 0; font-size: 13px; font-weight: 650; color: #243140; }
+  .shot p { margin: 2px 0 0; font-size: 12px; color: var(--sub); }
+  .shot-frame {
+    width: 195px; height: 422px; overflow: hidden; border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(30, 50, 70, 0.16); background: var(--bg);
+  }
+  .shot-frame .screen { transform: scale(0.5); transform-origin: top left; }
+
+  .screen {
+    width: 390px; height: 844px; background: var(--bg); position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .status {
+    height: 44px; padding: 12px 16px 0; display: flex; align-items: center; justify-content: space-between;
+    background: var(--nav); font-size: 14px; font-weight: 650;
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .nav {
+    height: 44px; background: var(--nav); display: flex; align-items: center; justify-content: center;
+    position: relative; flex-shrink: 0;
+  }
+  .nav h1 { margin: 0; font-size: 17px; font-weight: 650; }
+  .back {
+    position: absolute; left: 8px; top: 0; height: 44px; width: 44px; border: 0; background: transparent;
+    color: var(--text); font-size: 26px; line-height: 40px;
+  }
+  .capsule {
+    position: absolute; right: 8px; top: 6px; height: 32px; width: 84px; border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.55);
+    display: flex; align-items: center; justify-content: space-evenly;
+  }
+  .capsule i { width: 1px; height: 16px; background: rgba(0,0,0,0.12); }
+  .dots { letter-spacing: 1px; font-size: 16px; font-weight: 700; margin-top: -6px; }
+  .ring { width: 14px; height: 14px; border: 2px solid #1c2834; border-radius: 50%; box-shadow: inset 0 0 0 3px var(--nav); }
+
+  .body { flex: 1; overflow: hidden; padding: 12px 12px 0; }
+  .footer { flex-shrink: 0; background: #fff; }
+  .action-bar { padding: 10px 16px 12px; }
+  .tabbar {
+    height: 64px; border-top: 1px solid #eef2f6; display: flex; padding-bottom: 8px; background: #fff;
+  }
+  .tab {
+    flex: 1; border: 0; background: transparent; color: #8a99ad; font-size: 11px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  }
+  .tab.on { color: var(--primary); font-weight: 650; }
+  .tab svg { width: 22px; height: 22px; }
+
+  .btn {
+    height: 44px; border: 0; border-radius: 22px; background: var(--primary); color: #fff;
+    font-size: 16px; font-weight: 650; width: 100%;
+  }
+  .btn.small { height: 32px; width: auto; padding: 0 14px; border-radius: 16px; font-size: 14px; }
+  .btn.ghost {
+    background: #f3f5f8; color: #5c6b7a; font-weight: 550;
+  }
+  .btn:disabled, .btn.off {
+    background: #e8edf2; color: #a3adb8;
+  }
+  .btn-text {
+    border: 0; background: transparent; color: var(--danger); font-size: 14px; padding: 0 8px; height: 32px;
+  }
+
+  .card {
+    background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 10px 12px 8px;
+    margin-bottom: 8px; position: relative; overflow: hidden;
+  }
+  .card:before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--bar, var(--primary));
+  }
+  .card.done { --bar: var(--green); }
+  .card.expired { --bar: var(--amber); }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .name { font-size: 16px; font-weight: 650; display: flex; align-items: center; gap: 4px; }
+  .chev { color: #c5ced6; font-size: 18px; font-weight: 400; }
+  .pill {
+    font-size: 12px; line-height: 20px; padding: 0 8px; border-radius: 10px; font-weight: 650; flex-shrink: 0;
+  }
+  .pill.go { color: var(--primary-dark); background: var(--blue-bg); }
+  .pill.done { color: var(--green); background: var(--green-bg); }
+  .pill.expired { color: #9a6b22; background: var(--amber-bg); }
+  .meta { margin-top: 4px; color: var(--sub); font-size: 13px; line-height: 1.4; }
+  .chips { display: flex; gap: 6px; margin-top: 8px; }
+  .chip {
+    font-size: 12px; color: var(--primary-dark); background: var(--blue-bg);
+    border-radius: 8px; padding: 2px 8px;
+  }
+  .chip.muted { color: var(--sub); background: var(--soft); }
+  .progress { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .bar { flex: 1; height: 6px; background: #e7eef5; border-radius: 6px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--primary); border-radius: 6px; }
+  .card.done .bar span { background: var(--green); }
+  .card.expired .bar span { background: var(--amber); }
+  .frac { font-size: 13px; color: var(--text); font-weight: 650; white-space: nowrap; }
+  .ops { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 4px; }
+  .reason { font-size: 12px; color: var(--hint); }
+
+  .empty {
+    height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 36px 80px;
+  }
+  .illus {
+    width: 96px; height: 96px; border-radius: 28px; background: #fff; box-shadow: var(--shadow);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+  }
+  .empty h3 { margin: 0; font-size: 17px; }
+  .empty p { margin: 8px 0 0; color: var(--sub); font-size: 14px; line-height: 1.6; }
+  .empty .btn { margin-top: 20px; width: 180px; }
+
+  .group {
+    background: #fff; border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 10px;
+  }
+  .cell {
+    min-height: 52px; padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .cell:last-child { border-bottom: 0; }
+  .label { width: 108px; font-size: 15px; flex-shrink: 0; }
+  .opt { color: var(--hint); font-size: 12px; font-weight: 400; margin-left: 4px; }
+  .req { color: #e07a72; margin-left: 2px; }
+  .val { flex: 1; text-align: right; font-size: 14px; color: var(--text); }
+  .ph { color: #b4bec8; }
+  .field {
+    flex: 1; border: 0; background: transparent; text-align: right; font-size: 15px; color: var(--text); outline: none;
+  }
+  .field::placeholder { color: #b4bec8; }
+  .help { padding: 0 14px 10px; color: var(--hint); font-size: 12px; line-height: 1.5; }
+  .err { padding: 0 14px 10px; color: var(--danger); font-size: 12px; line-height: 1.5; }
+  .seg { display: flex; gap: 8px; padding: 0 14px 12px; }
+  .seg button {
+    flex: 1; height: 36px; border-radius: 10px; border: 0; background: var(--soft); color: var(--sub); font-size: 14px;
+  }
+  .seg button.on { background: var(--primary); color: #fff; font-weight: 650; }
+  .sec {
+    margin: 4px 4px 8px; font-size: 13px; color: var(--hint);
+  }
+  .readonly .val { color: #5f6d7c; }
+  .readonly { background: #fbfcfe; }
+
+  .mask {
+    position: absolute; inset: 0; background: rgba(22, 32, 44, 0.46);
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .mask.bottom { align-items: flex-end; padding: 0; }
+  .dialog { width: 300px; background: #fff; border-radius: 16px; overflow: hidden; }
+  .dialog h3 { margin: 22px 20px 8px; text-align: center; font-size: 17px; }
+  .dialog p { margin: 0 20px 18px; text-align: center; color: var(--sub); font-size: 14px; line-height: 1.65; }
+  .dialog .acts { display: flex; border-top: 1px solid var(--line); }
+  .dialog .acts button {
+    flex: 1; height: 48px; border: 0; background: #fff; font-size: 16px; color: var(--sub);
+  }
+  .dialog .acts button + button { border-left: 1px solid var(--line); color: var(--danger); font-weight: 650; }
+  .dialog .acts button.ok { color: var(--primary); font-weight: 650; }
+
+  .sheet {
+    width: 100%; background: #fff; border-radius: 16px 16px 0 0; padding-bottom: 18px;
+  }
+  .sheet { box-shadow: 0 -8px 24px rgba(20, 40, 60, 0.12); }
+  .sheet .head {
+    height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 4px;
+    border-bottom: 1px solid var(--line); font-size: 15px;
+  }
+  .sheet .head b { font-size: 16px; font-weight: 650; }
+  .sheet .head button {
+    border: 0; background: transparent; font-size: 16px; color: var(--sub);
+    min-width: 72px; height: 44px;
+  }
+  .sheet .head button:first-child { text-align: left; padding-left: 12px; }
+  .sheet .head .ok { color: var(--primary); font-weight: 650; text-align: right; padding-right: 12px; }
+  .cols { display: flex; padding: 8px 8px 12px; position: relative; }
+  .col { flex: 1; text-align: center; }
+  .col em { display: block; font-style: normal; color: var(--hint); font-size: 12px; margin-bottom: 6px; }
+  .col span { display: block; height: 32px; line-height: 32px; color: #b7c0c9; font-size: 15px; }
+  .col span.on { color: var(--text); font-weight: 700; font-size: 17px; }
+  .wheel {
+    position: absolute; left: 10px; right: 10px; top: 62px; height: 32px; border-radius: 8px;
+    background: rgba(90, 143, 199, 0.1); pointer-events: none;
+  }
+  .option {
+    height: 52px; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px; font-size: 15px; border-bottom: 1px solid var(--line);
+  }
+  .option.on { color: var(--primary); font-weight: 650; }
+  .check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #d5dde6; }
+  .option.on .check { border-color: var(--primary); background: var(--primary); box-shadow: inset 0 0 0 3px #fff; }
+  .drop {
+    margin: -4px 12px 0; background: #fff; border-radius: 12px; box-shadow: 0 8px 24px rgba(30,50,70,.12);
+    overflow: hidden; position: relative; z-index: 2;
+  }
+
+  .banner {
+    background: #e8f7ef; color: #217a4e; border-radius: 10px; padding: 10px 12px;
+    font-size: 14px; font-weight: 650; text-align: center; margin-bottom: 8px;
+  }
+
+  .profile { padding-top: 18px; text-align: center; }
+  .avatar {
+    width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 10px;
+    background: linear-gradient(180deg, #d7e9f8, #c5daf0);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 0 3px #fff;
+  }
+  .nick {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent;
+    font-size: 18px; font-weight: 650; color: var(--text);
+  }
+  .nick small { font-size: 12px; color: var(--primary); font-weight: 650; background: var(--blue-bg); border-radius: 8px; padding: 2px 6px; }
+  .stats { display: flex; gap: 8px; margin-top: 18px; text-align: center; }
+  .stat {
+    flex: 1; background: #fff; border-radius: 14px; box-shadow: var(--shadow); padding: 14px 4px 12px;
+  }
+  .stat b { display: block; font-size: 26px; line-height: 1.1; }
+  .stat span { display: block; margin-top: 4px; font-size: 13px; color: var(--sub); }
+  .note {
+    margin: 16px 8px 0; color: var(--hint); font-size: 12px; line-height: 1.6; text-align: left;
+    background: #fff; border-radius: 12px; padding: 12px 14px;
+  }
+  .sheet .pad { padding: 16px; }
+  .nick-input {
+    width: 100%; height: 46px; border: 0; border-radius: 12px; background: var(--soft);
+    padding: 0 14px; font-size: 16px; outline: none;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const svg = {
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3.5v3M16 3.5v3M4 10h16"/><path d="M9 14.5l2 2 4-4"/></svg>',
+  tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12.5V5.8A1.8 1.8 0 0 1 5.8 4H12l8 8-7.2 7.2L4 12.5z"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c1.2-3 3.4-4.4 6.5-4.4s5.3 1.4 6.5 4.4"/></svg>',
+  userLg: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#5a8fc7" stroke-width="1.6"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c1.2-3 3.4-4.4 6.5-4.4s5.3 1.4 6.5 4.4"/></svg>',
+  box: '<svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="10" y="14" width="28" height="22" rx="4" stroke="#8eb4d8" stroke-width="2"/><path d="M18 14v-2a6 6 0 0 1 12 0v2" stroke="#8eb4d8" stroke-width="2"/><path d="M20 26l3 3 6-6" stroke="#5a8fc7" stroke-width="2" stroke-linecap="round"/></svg>'
+};
+
+function statusBar() {
+  return '<div class="status"><span>16:26</span><div class="status-icons"><svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="#1c2834"/><rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="#1c2834"/><rect x="9" y="2.5" width="3" height="9.5" rx="0.5" fill="#1c2834"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="#1c2834"/></svg><svg width="22" height="12" viewBox="0 0 22 12"><rect x="0.5" y="0.5" width="18" height="11" rx="2" stroke="#1c2834"/><rect x="2" y="2" width="12" height="8" rx="1" fill="#1c2834"/><rect x="19.5" y="3.5" width="2" height="5" rx="0.5" fill="#1c2834"/></svg></div></div>';
+}
+function capsule() {
+  return '<div class="capsule"><span class="dots">···</span><i></i><span class="ring"></span></div>';
+}
+function nav(title, back) {
+  return '<div class="nav">' + (back ? '<button class="back">‹</button>' : '') + '<h1>' + title + '</h1>' + capsule() + '</div>';
+}
+function tabs(on) {
+  const item = (id, icon, label) => '<button class="tab' + (on === id ? ' on' : '') + '">' + icon + label + '</button>';
+  return '<div class="tabbar">' + item('checkin', svg.cal, '打卡') + item('tag', svg.tag, '标签') + item('mine', svg.user, '我的') + '</div>';
+}
+function screen(title, back, inner, foot) {
+  return '<div class="screen">' + statusBar() + nav(title, back) + inner + (foot || '') + '</div>';
+}
+function card(state, name, pill, pillText, lines, chips, pct, frac, ops) {
+  const chipHtml = chips.map((c) => '<span class="chip' + (c.muted ? ' muted' : '') + '">' + c.text + '</span>').join('');
+  return '<div class="card ' + state + '"><div class="row"><div class="name">' + name + ' <span class="chev">›</span></div><span class="pill ' + pill + '">' + pillText + '</span></div>'
+    + '<div class="chips">' + chipHtml + '</div>'
+    + lines.map((t) => '<div class="meta">' + t + '</div>').join('')
+    + '<div class="progress"><div class="bar"><span style="width:' + pct + '%"></span></div><div class="frac">' + frac + ' · ' + pct + '%</div></div>'
+    + '<div class="ops">' + ops + '</div></div>';
+}
+
+const plans = [
+  card('', '晨间阅读', 'go', '进行中', ['截止 2026-09-30 21:00:00', '创建 2026-09-01 08:12:03'], [{ text: '日' , muted: true }, { text: '学习 / 读书' }], 40, '2/5', '<button class="btn-text">删除</button><button class="btn small">打卡</button>'),
+  card('done', '每周复盘', 'done', '已完成', ['截止 2026-09-20 18:00:00', '创建 2026-09-01 09:00:00'], [{ text: '周', muted: true }], 100, '3/3', '<button class="btn-text">删除</button><span class="reason">已完成</span><button class="btn small off" disabled>打卡</button>'),
+  card('expired', '月度总结', 'expired', '已过期', ['截止 2026-09-15 23:59:59', '创建 2026-09-01 10:20:11'], [{ text: '月', muted: true }, { text: '工作 / 周报' }], 25, '1/4', '<button class="btn-text">删除</button><span class="reason">已过期</span><button class="btn small off" disabled>打卡</button>')
+];
+
+function listBody(cards) {
+  return '<div class="body">' + cards + '</div><div class="footer"><div class="action-bar"><button class="btn">新增打卡</button></div>' + tabs('checkin') + '</div>';
+}
+
+function cell(label, value, extra) {
+  const req = extra && extra.req ? '<i class="req">*</i>' : '';
+  const opt = extra && extra.opt ? '<span class="opt">选填</span>' : '';
+  const cls = value ? '' : ' ph';
+  const text = value || (extra && extra.ph) || '';
+  return '<div class="cell"><div class="label">' + label + req + opt + '</div><div class="val' + cls + '">' + text + '</div><span class="chev">›</span></div>';
+}
+function inputCell(label, value, ph, req) {
+  return '<div class="cell"><div class="label">' + label + (req ? '<i class="req">*</i>' : '') + '</div><input class="field" value="' + (value || '') + '" placeholder="' + (ph || '') + '" /></div>';
+}
+function seg(on) {
+  return '<div class="seg">' + ['日', '周', '月'].map((d) => '<button class="' + (d === on ? 'on' : '') + '">' + d + '</button>').join('') + '</div>';
+}
+function readonly(label, value) {
+  return '<div class="cell readonly"><div class="label">' + label + '</div><div class="val">' + value + '</div></div>';
+}
+
+const screens = [
+  {
+    id: 'checkin-list',
+    title: '打卡列表',
+    desc: '名称、截止时间、创建时间、周期、标签、进度、状态；可打卡、删除、编辑、新增',
+    html: screen('打卡', false, listBody(plans.join('')))
+  },
+  {
+    id: 'checkin-success',
+    title: '打卡成功',
+    desc: '进行中的计划打卡后次数 +1，并提示当前进度',
+    html: screen('打卡', false, listBody(
+      '<div class="banner">打卡成功，晨间阅读 3/5</div>'
+      + card('', '晨间阅读', 'go', '进行中', ['截止 2026-09-30 21:00:00', '创建 2026-09-01 08:12:03'], [{ text: '日', muted: true }, { text: '学习 / 读书' }], 60, '3/5', '<button class="btn-text">删除</button><button class="btn small">打卡</button>')
+      + plans[1] + plans[2]
+    ))
+  },
+  {
+    id: 'checkin-empty',
+    title: '打卡空状态',
+    desc: '没有计划时展示空状态，并提供新增入口',
+    html: screen('打卡', false, '<div class="body"><div class="empty"><div class="illus">' + svg.box + '</div><h3>还没有打卡计划</h3><p>添加一个计划后，就可以在这里查看进度并打卡</p><button class="btn">新增打卡</button></div></div><div class="footer">' + tabs('checkin') + '</div>')
+  },
+  {
+    id: 'checkin-delete',
+    title: '删除打卡确认',
+    desc: '删除前二次确认，确认后直接删除，没有回收站',
+    html: screen('打卡', false, listBody(plans.join('')) + '<div class="mask"><div class="dialog"><h3>删除这个计划？</h3><p>「晨间阅读」删除后无法恢复。本版没有回收站。</p><div class="acts"><button>取消</button><button>删除</button></div></div></div>')
+  },
+  {
+    id: 'checkin-create',
+    title: '新增打卡',
+    desc: '名称、截止时间、日/周/月、目标次数、可选标签',
+    html: screen('新增打卡', true, '<div class="body"><div class="group">'
+      + inputCell('名称', '晨间阅读', '请输入计划名称', true)
+      + cell('计划截止时间', '2026-09-30 21:00:00', { req: true })
+      + '<div class="cell" style="border-bottom:0"><div class="label">周期<i class="req">*</i></div></div>'
+      + seg('日')
+      + '<div class="help">只用于展示，不会按周期清零次数</div>'
+      + inputCell('目标次数', '5', '大于 0 的整数', true)
+      + '<div class="help">这是整条计划的总次数</div>'
+      + cell('标签', '学习 / 读书', { opt: true })
+      + '</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'checkin-time',
+    title: '选择截止时间',
+    desc: '时间选择器包含年、月、日、时、分、秒',
+    html: screen('新增打卡', true, '<div class="body"><div class="group">'
+      + inputCell('名称', '晨间阅读', '', true)
+      + cell('计划截止时间', '请选择', { req: true })
+      + '</div></div><div class="mask bottom"><div class="sheet"><div class="head"><button>取消</button><b>选择截止时间</b><button class="ok">确定</button></div><div class="cols"><div class="wheel"></div>'
+      + col('年', ['2025', '2026', '2027'], 1) + col('月', ['08', '09', '10'], 1) + col('日', ['29', '30', '01'], 1)
+      + col('时', ['20', '21', '22'], 1) + col('分', ['59', '00', '01'], 1) + col('秒', ['59', '00', '01'], 1)
+      + '</div></div></div>')
+  },
+  {
+    id: 'checkin-tag',
+    title: '选择关联标签',
+    desc: '标签可选，也可以不关联',
+    html: screen('新增打卡', true, '<div class="body"><div class="group">' + cell('标签', '不关联', { opt: true }) + '</div></div><div class="mask bottom"><div class="sheet"><div class="head"><button>取消</button><b>选择标签</b><button class="ok">确定</button></div>'
+      + opt('不关联', false) + opt('学习 / 读书', true) + opt('学习 / 英语', false) + opt('健康 / 跑步', false) + opt('工作 / 周报', false)
+      + '</div></div>')
+  },
+  {
+    id: 'checkin-errors',
+    title: '新增校验',
+    desc: '名称、截止时间、周期、目标次数未通过时给出对应提示',
+    html: screen('新增打卡', true, '<div class="body"><div class="group">'
+      + inputCell('名称', '', '请输入计划名称', true) + '<div class="err">请填写名称</div>'
+      + cell('计划截止时间', '', { req: true, ph: '请选择' }) + '<div class="err">请选择截止时间</div>'
+      + '<div class="cell" style="border-bottom:0"><div class="label">周期<i class="req">*</i></div></div>' + seg('') + '<div class="err">请选择周期</div>'
+      + inputCell('目标次数', '0', '大于 0 的整数', true) + '<div class="err">请输入大于 0 的整数</div>'
+      + cell('标签', '', { opt: true, ph: '可不选' })
+      + '</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'checkin-edit',
+    title: '编辑打卡',
+    desc: '回显可编辑项；已打卡次数、创建时间、状态只读',
+    html: screen('编辑打卡', true, '<div class="body"><div class="group">'
+      + inputCell('名称', '晨间阅读', '', true)
+      + cell('计划截止时间', '2026-09-30 21:00:00', { req: true })
+      + '<div class="cell" style="border-bottom:0"><div class="label">周期<i class="req">*</i></div></div>' + seg('日')
+      + inputCell('目标次数', '5', '', true)
+      + cell('标签', '学习 / 读书', { opt: true })
+      + '</div><div class="sec">系统记录，不可修改</div><div class="group">'
+      + readonly('已打卡次数', '2') + readonly('创建时间', '2026-09-01 08:12:03') + readonly('状态', '进行中')
+      + '</div><div class="help">进行中：未到截止时间，且还没打满次数</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'checkin-count',
+    title: '次数校验',
+    desc: '编辑时目标次数不能小于已打卡次数',
+    html: screen('编辑打卡', true, '<div class="body"><div class="group">'
+      + inputCell('名称', '晨间阅读', '', true)
+      + cell('计划截止时间', '2026-09-30 21:00:00', { req: true })
+      + '<div class="cell" style="border-bottom:0"><div class="label">周期<i class="req">*</i></div></div>' + seg('日')
+      + inputCell('目标次数', '1', '', true) + '<div class="err">目标次数不能小于已打卡次数</div>'
+      + '</div><div class="sec">系统记录，不可修改</div><div class="group">' + readonly('已打卡次数', '2') + readonly('状态', '进行中') + '</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'tag-list',
+    title: '标签列表',
+    desc: '卡片展示类型和名称，可进入编辑、删除、新增',
+    html: screen('标签', false, '<div class="body">' + tagCard('学习', '读书') + tagCard('学习', '英语') + tagCard('健康', '跑步') + tagCard('工作', '周报') + '</div><div class="footer"><div class="action-bar"><button class="btn">新增标签</button></div>' + tabs('tag') + '</div>')
+  },
+  {
+    id: 'tag-empty',
+    title: '标签空状态',
+    desc: '没有标签时展示空状态',
+    html: screen('标签', false, '<div class="body"><div class="empty"><div class="illus">' + svg.box + '</div><h3>还没有标签</h3><p>标签用来给计划分类。计划可以不关联标签。</p><button class="btn">新增标签</button></div></div><div class="footer">' + tabs('tag') + '</div>')
+  },
+  {
+    id: 'tag-create',
+    title: '新增标签',
+    desc: '类型可下拉选择，也可以输入新类型；名称必填',
+    html: screen('新增标签', true, '<div class="body"><div class="group">'
+      + cell('标签类型', '', { req: true, ph: '选择已有类型' })
+      + inputCell('新建类型', '', '没有合适的类型时，在这里输入', false)
+      + '<div class="help">选择已有类型，或输入一个新类型。填写新类型时，以新类型为准。</div>'
+      + inputCell('标签名称', '', '请输入名称', true)
+      + '</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'tag-dropdown',
+    title: '类型下拉',
+    desc: '从已有类型中选择',
+    html: screen('新增标签', true, '<div class="body"><div class="group">'
+      + cell('标签类型', '请选择', { req: true })
+      + '</div><div class="drop">' + opt('学习', true) + opt('健康', false) + opt('工作', false) + '</div></div>')
+  },
+  {
+    id: 'tag-edit',
+    title: '编辑标签',
+    desc: '进入编辑后回显类型和名称',
+    html: screen('编辑标签', true, '<div class="body"><div class="group">'
+      + cell('标签类型', '学习', { req: true })
+      + inputCell('新建类型', '', '要改成新类型时再填写', false)
+      + inputCell('标签名称', '读书', '', true)
+      + '</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'tag-errors',
+    title: '标签必填校验',
+    desc: '类型和名称都为空时分别提示',
+    html: screen('新增标签', true, '<div class="body"><div class="group">'
+      + cell('标签类型', '', { req: true, ph: '选择已有类型' })
+      + inputCell('新建类型', '', '或输入新类型', false)
+      + '<div class="err">请选择已有类型，或输入新类型</div>'
+      + inputCell('标签名称', '', '请输入名称', true)
+      + '<div class="err">请填写标签名称</div>'
+      + '</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'tag-duplicate',
+    title: '标签重名校验',
+    desc: '同一类型下名称不能重复',
+    html: screen('新增标签', true, '<div class="body"><div class="group">'
+      + cell('标签类型', '学习', { req: true })
+      + inputCell('新建类型', '', '或输入新类型', false)
+      + inputCell('标签名称', '读书', '', true)
+      + '<div class="err">该类型下已有同名标签</div>'
+      + '</div></div><div class="footer"><div class="action-bar"><button class="btn">保存</button></div></div>')
+  },
+  {
+    id: 'tag-delete',
+    title: '删除标签确认',
+    desc: '删除后，使用该标签的计划变为未关联，计划保留',
+    html: screen('标签', false, '<div class="body">' + tagCard('学习', '读书') + tagCard('学习', '英语') + tagCard('健康', '跑步') + '</div><div class="footer"><div class="action-bar"><button class="btn">新增标签</button></div>' + tabs('tag') + '</div><div class="mask"><div class="dialog"><h3>删除这个标签？</h3><p>「学习 / 读书」删除后，正在使用它的计划会变成未关联标签。计划本身会保留。</p><div class="acts"><button>取消</button><button>删除</button></div></div></div>')
+  },
+  {
+    id: 'profile',
+    title: '我的',
+    desc: '默认头像、可改昵称，以及进行中、已完成、已过期数量',
+    html: screen('我的', false, '<div class="body"><div class="profile"><div class="avatar">' + svg.userLg + '</div><button class="nick">打卡用户 <small>编辑</small></button><div class="stats"><div class="stat"><b style="color:#3f74ad">1</b><span>进行中</span></div><div class="stat"><b style="color:#2f9e6b">1</b><span>已完成</span></div><div class="stat"><b style="color:#c48a3a">1</b><span>已过期</span></div></div><div class="note">头像使用默认图。昵称保存在本机，默认是「打卡用户」，不会向微信申请头像和昵称。数量按当前计划状态统计。</div></div></div><div class="footer">' + tabs('mine') + '</div>')
+  },
+  {
+    id: 'profile-nick',
+    title: '修改昵称',
+    desc: '在本机修改昵称',
+    html: screen('我的', false, '<div class="body"><div class="profile"><div class="avatar">' + svg.userLg + '</div><button class="nick">打卡用户 <small>编辑</small></button></div></div><div class="footer">' + tabs('mine') + '</div><div class="mask bottom"><div class="sheet"><div class="head"><button>取消</button><b>修改昵称</b><button class="ok">保存</button></div><div class="pad"><input class="nick-input" value="打卡用户" /><div class="help">只保存在本机。清空后会恢复为「打卡用户」。</div></div></div></div>')
+  }
+];
+
+function col(name, rows, on) {
+  return '<div class="col"><em>' + name + '</em>' + rows.map((r, i) => '<span class="' + (i === on ? 'on' : '') + '">' + r + '</span>').join('') + '</div>';
+}
+function opt(text, on) {
+  return '<div class="option' + (on ? ' on' : '') + '"><span>' + text + '</span><i class="check"></i></div>';
+}
+function tagCard(type, name) {
+  return '<div class="card"><div class="row"><div><div class="meta" style="margin:0">类型</div><div class="name" style="margin-top:2px">' + type + '</div></div><span class="chev">›</span></div><div class="row" style="margin-top:8px"><div><div class="meta" style="margin:0">名称</div><div style="font-size:15px;margin-top:2px">' + name + '</div></div><button class="btn-text">删除</button></div></div>';
+}
+
+const q = new URLSearchParams(location.search).get('screen');
+const app = document.getElementById('app');
+if (q) {
+  document.body.className = 'single';
+  const found = screens.find((s) => s.id === q);
+  app.innerHTML = found ? found.html : '';
+} else {
+  document.body.className = 'gallery';
+  app.innerHTML = '<h1 class="page-title">目标打卡 0.1</h1><p class="page-desc">三个 Tab：打卡、标签、我的。一条记录是可反复打卡的计划。下面每张图对应一个界面或关键状态。</p><div class="gallery">'
+    + screens.map((s) => '<div class="shot"><div class="shot-frame">' + s.html + '</div><h2>' + s.title + '</h2><p>' + s.desc + '</p></div>').join('')
+    + '</div>';
+}
+</script>
+</body>
+</html>

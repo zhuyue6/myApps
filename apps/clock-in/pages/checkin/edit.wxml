@@ -1,0 +1,126 @@
+<view class="page with-action">
+  <view class="group">
+    <view class="cell">
+      <view class="label">名称<text class="req">*</text></view>
+      <input
+        class="field"
+        value="{{form.name}}"
+        placeholder="请输入计划名称"
+        placeholder-class="ph"
+        bindinput="onName"
+        cursor-spacing="80"
+      />
+    </view>
+    <view class="err" wx:if="{{errors.name}}">{{errors.name}}</view>
+
+    <view class="cell" bindtap="onOpenTime">
+      <view class="label">计划截止时间<text class="req">*</text></view>
+      <view class="val {{form.deadline ? '' : 'ph'}}">{{form.deadline || '请选择'}}</view>
+      <text class="chev">›</text>
+    </view>
+    <view class="err" wx:if="{{errors.deadline}}">{{errors.deadline}}</view>
+
+    <view class="cell no-line">
+      <view class="label">周期<text class="req">*</text></view>
+    </view>
+    <view class="seg">
+      <button
+        class="seg-btn {{form.cycle === item.value ? 'on' : ''}}"
+        wx:for="{{cycles}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onCycle"
+        hover-class="btn-hover"
+      >{{item.label}}</button>
+    </view>
+    <view class="help" wx:if="{{!errors.cycle}}">只用于展示，不会按周期清零次数</view>
+    <view class="err" wx:if="{{errors.cycle}}">{{errors.cycle}}</view>
+
+    <view class="cell no-line">
+      <view class="label">目标次数<text class="req">*</text></view>
+      <input
+        class="field"
+        type="number"
+        value="{{form.targetCount}}"
+        placeholder="大于 0 的整数"
+        placeholder-class="ph"
+        bindinput="onTarget"
+        cursor-spacing="80"
+      />
+    </view>
+    <view class="help" wx:if="{{!errors.targetCount}}">这是整条计划的总次数</view>
+    <view class="err" wx:if="{{errors.targetCount}}">{{errors.targetCount}}</view>
+
+    <view class="cell" bindtap="onOpenTag">
+      <view class="label">标签<text class="opt">选填</text></view>
+      <view class="val {{form.tagId ? '' : 'ph'}}">{{form.tagId ? tagText : '可不选'}}</view>
+      <text class="chev">›</text>
+    </view>
+    <view class="err" wx:if="{{errors.tag}}">{{errors.tag}}</view>
+  </view>
+
+  <block wx:if="{{mode === 'edit'}}">
+    <view class="sec">系统记录，不可修改</view>
+    <view class="group">
+      <view class="cell readonly">
+        <view class="label">已打卡次数</view>
+        <view class="val">{{checkedCount}}</view>
+      </view>
+      <view class="cell readonly">
+        <view class="label">创建时间</view>
+        <view class="val">{{createdAt}}</view>
+      </view>
+      <view class="cell readonly no-line">
+        <view class="label">状态</view>
+        <view class="val">{{statusText}}</view>
+      </view>
+    </view>
+    <view class="help">{{statusHelp}}</view>
+  </block>
+</view>
+
+<view class="action-bar solo">
+  <button class="btn" hover-class="btn-hover" bindtap="onSave">保存</button>
+</view>
+
+<van-popup show="{{showTime}}" position="bottom" round z-index="{{200}}" bind:close="onCloseTime">
+  <view class="sheet" catchtouchmove="noop">
+    <view class="sheet-head">
+      <text class="sheet-btn" bindtap="onCloseTime">取消</text>
+      <text class="sheet-title">选择截止时间</text>
+      <text class="sheet-btn ok" bindtap="onTimeConfirm">确定</text>
+    </view>
+    <view class="col-labels">
+      <text>年</text><text>月</text><text>日</text><text>时</text><text>分</text><text>秒</text>
+    </view>
+    <van-picker
+      wx:if="{{showTime}}"
+      columns="{{timeColumns}}"
+      visible-item-count="{{5}}"
+      item-height="{{44}}"
+      bind:change="onTimeChange"
+    />
+  </view>
+</van-popup>
+
+<van-popup show="{{showTag}}" position="bottom" round z-index="{{200}}" bind:close="onCloseTag">
+  <view class="sheet">
+    <view class="sheet-head">
+      <text class="sheet-btn" bindtap="onCloseTag">取消</text>
+      <text class="sheet-title">选择标签</text>
+      <text class="sheet-btn ok" bindtap="onTagConfirm">确定</text>
+    </view>
+    <scroll-view scroll-y class="sheet-scroll" style="height: {{sheetHeight}}rpx;">
+      <view
+        class="option {{draftTagId === item.id ? 'on' : ''}}"
+        wx:for="{{tagOptions}}"
+        wx:key="text"
+        data-id="{{item.id}}"
+        bindtap="onPickTag"
+      >
+        <text>{{item.text}}</text>
+        <view class="check"></view>
+      </view>
+    </scroll-view>
+  </view>
+</van-popup>

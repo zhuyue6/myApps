@@ -1,0 +1,8 @@
+.card-hover {
+  opacity: 0.92;
+}
+
+.tag-foot {
+  margin-top: 16rpx;
+  align-items: flex-end;
+}

@@ -1,0 +1,7 @@
+.page.with-action {
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+.ph {
+  color: #b4bec8;
+}

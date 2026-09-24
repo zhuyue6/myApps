@@ -1,0 +1,42 @@
+<view class="page with-tab">
+  <view class="profile">
+    <view class="avatar">
+      <van-icon name="contact" size="40px" color="#5a8fc7" />
+    </view>
+    <view class="nick" bindtap="onOpenNick">
+      <text>{{nickname}}</text>
+      <text class="edit">编辑</text>
+    </view>
+    <view class="stats">
+      <view class="stat">
+        <text class="num ongoing">{{ongoing}}</text>
+        <text class="stat-label">进行中</text>
+      </view>
+      <view class="stat">
+        <text class="num done">{{completed}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+      <view class="stat">
+        <text class="num expired">{{expired}}</text>
+        <text class="stat-label">已过期</text>
+      </view>
+    </view>
+    <view class="note">头像使用默认图。昵称保存在本机，默认是「打卡用户」，不会向微信申请头像和昵称。数量按当前计划状态统计。</view>
+  </view>
+</view>
+
+<root-portal wx:if="{{showNick}}">
+  <view class="mask" catchtouchmove="noop">
+    <view class="sheet">
+      <view class="sheet-head">
+        <text class="sheet-btn" bindtap="onCloseNick">取消</text>
+        <text class="sheet-title">修改昵称</text>
+        <text class="sheet-btn ok" bindtap="onSaveNick">保存</text>
+      </view>
+      <view class="sheet-pad">
+        <input class="nick-input" value="{{draftNick}}" focus="{{showNick}}" bindinput="onNickInput" cursor-spacing="80" />
+        <view class="help nick-help">只保存在本机。清空后会恢复为「打卡用户」。</view>
+      </view>
+    </view>
+  </view>
+</root-portal>

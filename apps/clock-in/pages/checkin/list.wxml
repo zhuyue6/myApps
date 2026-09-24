@@ -1,0 +1,64 @@
+<view class="page {{plans.length ? 'with-action' : 'with-tab'}}">
+  <view class="banner" wx:if="{{banner}}">{{banner}}</view>
+
+  <block wx:if="{{loaded && !plans.length}}">
+    <view class="empty">
+      <view class="illus">
+        <van-icon name="records" size="48px" color="#8eb4d8" />
+      </view>
+      <view class="empty-title">还没有打卡计划</view>
+      <view class="empty-desc">添加一个计划后，就可以在这里查看进度并打卡</view>
+      <button class="btn" hover-class="btn-hover" bindtap="onCreate">新增打卡</button>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view
+      class="card"
+      wx:for="{{plans}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onOpen"
+      hover-class="card-hover"
+    >
+      <view class="mark {{item.cardClass}}"></view>
+      <view class="row">
+        <view class="name">{{item.name}} <text class="chev">›</text></view>
+        <text class="pill {{item.pillClass}}">{{item.statusText}}</text>
+      </view>
+      <view class="chips">
+        <text class="chip muted">{{item.cycleText}}</text>
+        <text class="chip" wx:if="{{item.tagText}}">{{item.tagText}}</text>
+      </view>
+      <view class="meta">截止 {{item.deadline}}</view>
+      <view class="meta">创建 {{item.createdAt}}</view>
+      <view class="progress">
+        <view class="bar">
+          <view class="bar-inner {{item.cardClass}}" style="width: {{item.percent}}%;"></view>
+        </view>
+        <text class="frac">{{item.checkedCount}}/{{item.targetCount}} · {{item.percent}}%</text>
+      </view>
+      <view class="ops">
+        <button
+          class="btn-text"
+          hover-class="btn-hover"
+          catchtap="onAskDelete"
+          data-id="{{item.id}}"
+          data-name="{{item.name}}"
+        >删除</button>
+        <text class="reason" wx:if="{{item.blockReason}}">{{item.blockReason}}</text>
+        <button
+          class="btn small {{item.canCheckIn ? '' : 'off'}}"
+          hover-class="{{item.canCheckIn ? 'btn-hover' : 'none'}}"
+          catchtap="onCheckIn"
+          data-id="{{item.id}}"
+          disabled="{{!item.canCheckIn}}"
+        >打卡</button>
+      </view>
+    </view>
+  </block>
+</view>
+
+<view class="action-bar" wx:if="{{plans.length}}">
+  <button class="btn" hover-class="btn-hover" bindtap="onCreate">新增打卡</button>
+</view>
