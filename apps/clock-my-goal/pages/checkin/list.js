@@ -4,6 +4,7 @@ Page({
   data: {
     plans: [],
     loaded: false,
+    needLogin: false,
     banner: '',
   },
 
@@ -29,9 +30,15 @@ Page({
 
   load() {
     return api.listPlans().then((plans) => {
-      this.setData({ plans, loaded: true });
+      this.setData({ plans, loaded: true, needLogin: false });
     }).catch((error) => {
-      wx.showToast({ title: error.message || '加载失败', icon: 'none' });
+      const needLogin = /登录/.test(error.message || '');
+      this.setData({
+        loaded: true,
+        needLogin,
+        plans: needLogin ? [] : this.data.plans,
+      });
+      if (!needLogin) wx.showToast({ title: error.message || '加载失败', icon: 'none' });
     });
   },
 

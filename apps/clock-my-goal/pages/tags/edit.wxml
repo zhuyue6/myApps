@@ -1,0 +1,65 @@
+<view class="page with-action">
+  <view class="help top-help" wx:if="{{editing}}">已有标签暂时不能修改，后端还没有更新标签的接口。</view>
+  <view class="group">
+    <view class="cell" bindtap="onToggleTypes">
+      <view class="label">标签类型<text class="req">*</text></view>
+      <view class="val {{(creatingType || form.type) ? '' : 'ph'}}">{{creatingType ? '新增' : (form.type || '选择已有类型')}}</view>
+      <text class="chev">›</text>
+    </view>
+    <view class="drop" wx:if="{{showTypes}}">
+      <view
+        class="option {{!creatingType && form.type === item ? 'on' : ''}}"
+        wx:for="{{types}}"
+        wx:key="*this"
+        data-type="{{item}}"
+        bindtap="onSelectType"
+      >
+        <text>{{item}}</text>
+        <view class="check"></view>
+      </view>
+      <view
+        wx:if="{{!editing}}"
+        class="option option-add {{creatingType ? 'on' : ''}}"
+        data-action="create"
+        bindtap="onSelectType"
+      >
+        <text>新增</text>
+        <view class="check"></view>
+      </view>
+    </view>
+    <view class="err" wx:if="{{errors.type && !creatingType}}">{{errors.type}}</view>
+
+    <block wx:if="{{creatingType}}">
+      <view class="cell no-line">
+        <view class="label">新建类型<text class="req">*</text></view>
+        <input
+          class="field"
+          value="{{form.newType}}"
+          placeholder="请输入新类型"
+          placeholder-class="ph"
+          bindinput="onNewType"
+          cursor-spacing="80"
+        />
+      </view>
+      <view class="help" wx:if="{{!errors.type}}">填写新类型名称，保存时以新类型为准。</view>
+      <view class="err" wx:if="{{errors.type}}">{{errors.type}}</view>
+    </block>
+
+    <view class="cell no-line">
+      <view class="label">标签名称<text class="req">*</text></view>
+      <input
+        class="field"
+        value="{{form.name}}"
+        placeholder="请输入名称"
+        placeholder-class="ph"
+        bindinput="onName"
+        cursor-spacing="80"
+      />
+    </view>
+    <view class="err" wx:if="{{errors.name}}">{{errors.name}}</view>
+  </view>
+</view>
+
+<view class="action-bar solo">
+  <button class="btn" hover-class="btn-hover" bindtap="onSave">保存</button>
+</view>

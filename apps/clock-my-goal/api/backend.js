@@ -1,13 +1,14 @@
 /**
- * 已实现的 Java 接口。页面不要直接 wx.request，从这里进。
+ * clock-in-app 已有接口。页面不要直接 wx.request。
  * 用户：/user/login /user/register /user/logout /user/uploadAvatar
  * 标签：/label/createLabel /label/removeLabel /label/getLabelList /label/getLabelById
- * 记录：/record/createRecord /record/getRecord /record/getRecords /record/removeRecord
+ * 目标：/goal/createGoal /goal/updateGoal /goal/getGoals /goal/removeGoal /goal/clockIn
  *
- * 这些接口是账号、标签、打卡流水。0.1 原型的计划（截止时间、周期、目标次数）存在本地。
+ * /goal/getGoal 是 GET 且要求 JSON body，小程序 GET 只会把参数放到查询串，这里不调用它。
+ * 详情从 /goal/getGoals 里按 id 取。
  */
 const config = require('./config');
-const { request, getToken, setToken } = require('./request');
+const { request, getToken, getSession, setSession } = require('./request');
 
 function login(userName, password) {
   return request({
@@ -16,7 +17,7 @@ function login(userName, password) {
     data: { userName, password },
     auth: false,
   }).then((user) => {
-    if (user && user.token) setToken(user.token);
+    if (user && user.token) setSession(user);
     return user;
   });
 }
@@ -41,11 +42,11 @@ function logout() {
     method: 'POST',
   }).then(
     (data) => {
-      setToken('');
+      setSession(null);
       return data;
     },
     (error) => {
-      setToken('');
+      setSession(null);
       throw error;
     },
   );
@@ -114,43 +115,60 @@ function getLabelById(id) {
   });
 }
 
-function createRecord(payload) {
+function createGoal(payload) {
   return request({
-    url: '/record/createRecord',
+    url: '/goal/createGoal',
     method: 'POST',
     data: {
       remark: payload.remark || '',
       clockInTime: payload.clockInTime,
       clockOutTime: payload.clockOutTime || '',
       labelId: payload.labelId || 0,
+      clockInCycle: payload.clockInCycle,
     },
   });
 }
 
-function getRecord(id) {
+function updateGoal(payload) {
   return request({
-    url: '/record/getRecord',
+    url: '/goal/updateGoal',
+    method: 'POST',
+    data: {
+      id: payload.id,
+      remark: payload.remark || '',
+      clockInTime: payload.clockInTime,
+      clockOutTime: payload.clockOutTime || '',
+      labelId: payload.labelId || 0,
+      clockInCycle: payload.clockInCycle,
+    },
+  });
+}
+
+function getGoals() {
+  return request({
+    url: '/goal/getGoals',
     method: 'GET',
+  });
+}
+
+function removeGoal(id) {
+  return request({
+    url: '/goal/removeGoal',
+    method: 'POST',
     data: { id },
   });
 }
 
-function getRecords() {
+function clockIn(id) {
   return request({
-    url: '/record/getRecords',
-    method: 'GET',
-  });
-}
-
-function removeRecord(id) {
-  return request({
-    url: '/record/removeRecord',
+    url: '/goal/clockIn',
     method: 'POST',
     data: { id },
   });
 }
 
 module.exports = {
+  getSession,
   login,
   register,
   logout,
@@ -159,8 +177,9 @@ module.exports = {
   removeLabel,
   getLabelList,
   getLabelById,
-  createRecord,
-  getRecord,
-  getRecords,
-  removeRecord,
+  createGoal,
+  updateGoal,
+  getGoals,
+  removeGoal,
+  clockIn,
 };

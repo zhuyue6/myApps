@@ -90,22 +90,22 @@ Page({
 
   onTimeChange(event) {
     if (this._timeLock) return;
-    const values = event.detail.value || [];
-    if (values.length < 6) return;
+    const values = event.detail.value;
+    if (!Array.isArray(values) || values.length < 3) return;
     const year = Number(values[0]);
     const month = Number(values[1]);
+    if (!Number.isInteger(year) || year < 1000 || month < 1 || month > 12) return;
     const dim = datetime.daysInMonth(year, month);
     const days = datetime.dayValues(dim);
-    let day = values[2];
-    if (Number(day) > dim) day = datetime.pad(dim);
-    const next = [values[0], values[1], day, values[3], values[4], values[5]];
-    this._timeDraft = next;
+    let day = Number(values[2]);
+    if (!day || day > dim) day = dim;
+    this._timeDraft = [String(year), datetime.pad(month), datetime.pad(day)];
     const picker = event.detail.picker;
     if (picker && this._dayCount !== dim) {
       this._dayCount = dim;
       this._timeLock = true;
       picker.setColumnValues(2, days, false).then(() => {
-        if (Number(values[2]) > dim) return picker.setColumnValue(2, day);
+        if (Number(values[2]) > dim) return picker.setColumnValue(2, datetime.pad(day));
         return null;
       }).then(() => {
         this._timeLock = false;
@@ -116,7 +116,9 @@ Page({
   },
 
   onTimeConfirm() {
-    const deadline = datetime.joinDateTime(this._timeDraft);
+    const picker = this.selectComponent('#timePicker');
+    const live = picker && picker.getValues ? picker.getValues() : null;
+    const deadline = datetime.completeDay(live, 'end') || datetime.completeDay(this._timeDraft, 'end');
     if (!datetime.parseDateTime(deadline)) {
       this.setData({ 'errors.deadline': '请选择截止时间' });
       return;

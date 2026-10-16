@@ -91,9 +91,10 @@
       <text class="sheet-btn ok" bindtap="onTimeConfirm">确定</text>
     </view>
     <view class="col-labels">
-      <text>年</text><text>月</text><text>日</text><text>时</text><text>分</text><text>秒</text>
+      <text>年</text><text>月</text><text>日</text>
     </view>
     <van-picker
+      id="timePicker"
       wx:if="{{showTime}}"
       columns="{{timeColumns}}"
       visible-item-count="{{5}}"

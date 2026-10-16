@@ -1,6 +1,10 @@
 /**
- * 年月日时分秒。格式与后端 DateFormat 一致：yyyy-MM-dd HH:mm:ss
+ * 日期选到天，时间由调用方补全。
+ * 传给后端的格式仍是 yyyy-MM-dd HH:mm:ss。
  */
+
+const DAY_START = '00:00:00';
+const DAY_END = '23:59:59';
 
 function pad(n) {
   const s = String(n);
@@ -22,7 +26,7 @@ function formatDateTime(date) {
 }
 
 function parseDateTime(str) {
-  const matched = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(str || '');
+  const matched = /^(\d{4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$/.exec(String(str || '').trim());
   if (!matched) return null;
   const year = Number(matched[1]);
   const month = Number(matched[2]);
@@ -49,7 +53,7 @@ function nowString() {
 }
 
 /**
- * 时间选择器六列：年、月、日、时、分、秒
+ * 日期选择器三列：年、月、日
  * @param {Date} date
  */
 function buildColumns(date) {
@@ -59,17 +63,12 @@ function buildColumns(date) {
   const months = range(1, 12);
   const dim = daysInMonth(year, date.getMonth() + 1);
   const days = range(1, dim);
-  const hours = range(0, 23);
-  const seconds = range(0, 59);
   const values = [
     String(year),
     pad(date.getMonth() + 1),
     pad(date.getDate()),
-    pad(date.getHours()),
-    pad(date.getMinutes()),
-    pad(date.getSeconds()),
   ];
-  const lists = [years, months, days, hours, seconds, seconds];
+  const lists = [years, months, days];
   const columns = lists.map((list, index) => ({
     values: list,
     defaultIndex: Math.max(0, list.indexOf(values[index])),
@@ -81,9 +80,46 @@ function dayValues(count) {
   return range(1, count);
 }
 
-function joinDateTime(values) {
-  if (!values || values.length < 6) return '';
-  return `${values[0]}-${values[1]}-${values[2]} ${values[3]}:${values[4]}:${values[5]}`;
+function columnNumber(item) {
+  if (item && typeof item === 'object') {
+    if (item.text != null) item = item.text;
+    else if (item.value != null) item = item.value;
+  }
+  const matched = /^(\d+)/.exec(String(item == null ? '' : item).trim());
+  return matched ? Number(matched[1]) : NaN;
+}
+
+function dateParts(input) {
+  if (input instanceof Date) {
+    return [String(input.getFullYear()), pad(input.getMonth() + 1), pad(input.getDate())];
+  }
+  const matched = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(String(input || '').trim());
+  if (!matched) return null;
+  return [matched[1], pad(Number(matched[2])), pad(Number(matched[3]))];
+}
+
+function joinDay(values, clock) {
+  const year = columnNumber(values && values[0]);
+  const month = columnNumber(values && values[1]);
+  let day = columnNumber(values && values[2]);
+  if (!Number.isInteger(year) || year < 1000 || month < 1 || month > 12 || day < 1) return '';
+  const dim = daysInMonth(year, month);
+  if (day > dim) day = dim;
+  return `${year}-${pad(month)}-${pad(day)} ${clock}`;
+}
+
+function completeDay(values, edge) {
+  return joinDay(values, edge === 'start' ? DAY_START : DAY_END);
+}
+
+function startOfDay(input) {
+  const parts = dateParts(input == null ? new Date() : input);
+  return parts ? joinDay(parts, DAY_START) : '';
+}
+
+function endOfDay(input) {
+  const parts = dateParts(input == null ? new Date() : input);
+  return parts ? joinDay(parts, DAY_END) : '';
 }
 
 module.exports = {
@@ -94,5 +130,11 @@ module.exports = {
   nowString,
   buildColumns,
   dayValues,
-  joinDateTime,
+  dateParts,
+  joinDay,
+  completeDay,
+  startOfDay,
+  endOfDay,
+  DAY_START,
+  DAY_END,
 };

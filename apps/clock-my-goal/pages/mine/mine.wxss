@@ -85,6 +85,26 @@
   padding: 24rpx 28rpx;
 }
 
-.nick-help {
-  padding: 16rpx 0 0;
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+button.btn.logout {
+  margin-top: 32rpx;
+  background: #ffffff;
+  color: #d9655b;
+}
+
+.sex {
+  padding: 0 28rpx 20rpx;
+}
+
+.switch {
+  margin-top: 28rpx;
+  text-align: center;
+  color: #5a8fc7;
+  font-size: 28rpx;
+  font-weight: 600;
 }

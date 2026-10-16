@@ -4,6 +4,7 @@
 const config = require('./config');
 
 const TOKEN_KEY = 'clock_in_token';
+const USER_KEY = 'clock_in_user';
 
 function getToken() {
   try {
@@ -16,6 +17,39 @@ function getToken() {
 function setToken(token) {
   if (token) wx.setStorageSync(TOKEN_KEY, token);
   else wx.removeStorageSync(TOKEN_KEY);
+}
+
+function getSession() {
+  let user = null;
+  try {
+    user = wx.getStorageSync(USER_KEY);
+  } catch (e) {
+    user = null;
+  }
+  return {
+    token: getToken(),
+    user: user && typeof user === 'object' ? user : null,
+  };
+}
+
+function setSession(user) {
+  if (user && user.token) {
+    setToken(user.token);
+    wx.setStorageSync(USER_KEY, {
+      id: user.id,
+      userName: user.userName || '',
+      age: user.age,
+      sex: user.sex,
+      avatarUrl: user.avatarUrl || '',
+    });
+    return;
+  }
+  setToken('');
+  try {
+    wx.removeStorageSync(USER_KEY);
+  } catch (e) {
+    // 没有缓存时忽略
+  }
 }
 
 function request(options) {
@@ -39,7 +73,7 @@ function request(options) {
         const body = res.data;
         const code = body && typeof body.code === 'number' ? body.code : null;
         if (res.statusCode === 401 || code === 10006 || code === 10007) {
-          setToken('');
+          setSession(null);
           reject(new Error((body && body.message) || '请先登录'));
           return;
         }
@@ -66,5 +100,7 @@ module.exports = {
   TOKEN_KEY,
   getToken,
   setToken,
+  getSession,
+  setSession,
   request,
 };

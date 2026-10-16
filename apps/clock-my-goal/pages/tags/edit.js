@@ -8,18 +8,18 @@ Page({
       name: '',
     },
     errors: {},
+    editing: false,
     types: [],
     showTypes: false,
-    newTypePlaceholder: '没有合适的类型时，在这里输入',
+    /** 仅新增标签时可选；选中后才允许填写新建类型 */
+    creatingType: false,
   },
 
   onLoad(query) {
     this.tagId = query.id || '';
     const editing = !!this.tagId;
+    this.setData({ editing });
     wx.setNavigationBarTitle({ title: editing ? '编辑标签' : '新增标签' });
-    this.setData({
-      newTypePlaceholder: editing ? '要改成新类型时再填写' : '没有合适的类型时，在这里输入',
-    });
     if (!editing) return;
     api.getTag(this.tagId).then((tag) => {
       if (!tag) {
@@ -36,24 +36,51 @@ Page({
     });
   },
 
-  onShow() {
-    api.listTagTypes().then((types) => {
-      this.setData({ types });
-    }).catch(() => {});
-  },
-
   onToggleTypes() {
-    if (!this.data.types.length) {
-      wx.showToast({ title: '还没有已有类型，请在下方输入', icon: 'none' });
+    if (this.data.showTypes) {
+      this.setData({ showTypes: false });
       return;
     }
-    this.setData({ showTypes: !this.data.showTypes });
+    if (this.loadingTypes) return;
+    this.loadingTypes = true;
+    wx.showLoading({ title: '加载中', mask: true });
+    api.listTagTypes().then((types) => {
+      wx.hideLoading();
+      if (!types.length && this.data.editing) {
+        this.setData({ types: [], showTypes: false });
+        this.toast('还没有已有类型');
+        return;
+      }
+      this.setData({ types, showTypes: true });
+    }).catch((error) => {
+      wx.hideLoading();
+      this.toast(error.message || '类型加载失败');
+    }).then(() => {
+      this.loadingTypes = false;
+    });
+  },
+
+  toast(title) {
+    setTimeout(() => {
+      wx.showToast({ title, icon: 'none' });
+    }, 120);
   },
 
   onSelectType(event) {
-    const type = event.currentTarget.dataset.type || '';
+    const creatingType = !this.data.editing && event.currentTarget.dataset.action === 'create';
+    if (creatingType) {
+      this.setData({
+        creatingType: true,
+        'form.type': '',
+        showTypes: false,
+        'errors.type': '',
+      });
+      return;
+    }
     this.setData({
-      'form.type': type,
+      creatingType: false,
+      'form.type': event.currentTarget.dataset.type || '',
+      'form.newType': '',
       showTypes: false,
       'errors.type': '',
     });
@@ -71,10 +98,16 @@ Page({
     if (this.saving) return;
     this.saving = true;
     const form = this.data.form;
+    const creatingType = this.data.creatingType;
+    if (creatingType && !(form.newType || '').trim()) {
+      this.setData({ errors: { type: '请输入新类型' }, showTypes: false });
+      this.saving = false;
+      return;
+    }
     api.saveTag({
       id: this.tagId,
-      type: form.type,
-      newType: form.newType,
+      type: creatingType ? '' : form.type,
+      newType: creatingType ? form.newType : '',
       name: form.name,
     }).then((result) => {
       if (!result.ok) {

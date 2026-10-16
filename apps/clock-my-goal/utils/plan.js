@@ -113,7 +113,7 @@ function validateTag(input, tags, selfId) {
   const selected = (input.type || '').trim();
   const type = typed || selected;
   const name = (input.name || '').trim();
-  if (!type) errors.type = '请选择已有类型，或输入新类型';
+  if (!type) errors.type = '请选择标签类型';
   if (!name) errors.name = '请填写标签名称';
   if (type && name) {
     const duplicated = (tags || []).some(

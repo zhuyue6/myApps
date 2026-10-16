@@ -1,5 +1,5 @@
 /**
- * 目标打卡：页面走 api，本地计划与后端接口入口分开。
+ * 目标打卡。页面只走 api，计划和标签请求 clock-in-app。
  */
 const clockInApi = require('./api/index');
 
