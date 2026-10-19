@@ -1,6 +1,7 @@
 /**
  * 页面只调用本模块。
- * 计划、标签走 clock-in-app。状态仍在本地按截止时间和次数计算。
+ * 计划、标签走 clock-in-app。状态使用接口返回的 status（1 进行中 / 2 已完成 / 3 已过期）。
+ * 目标次数由服务端按周期与截止时间计算，创建/更新不再提交。
  */
 const planUtil = require('../utils/plan');
 const datetime = require('../utils/datetime');
@@ -8,6 +9,7 @@ const backend = require('./backend');
 
 const CYCLE_TO_API = { day: 1, week: 2, month: 3 };
 const CYCLE_FROM_API = { 1: 'day', 2: 'week', 3: 'month' };
+const STATUS_FROM_API = { 1: 'ongoing', 2: 'completed', 3: 'expired' };
 
 function asId(id) {
   if (id == null || id === '') return '';
@@ -35,13 +37,13 @@ function mapGoal(goal, tags) {
   return {
     id: asId(goal.id),
     name: goal.remark || '',
-    deadline: goal.clockOutTime || goal.clockInTime || '',
+    deadline: goal.expirationTime || '',
     cycle: CYCLE_FROM_API[goal.clockInCycle] || '',
     targetCount: goal.targetClockInCount || 0,
     checkedCount: goal.clockInCount || 0,
     tagId: tag ? tag.id : '',
     createdAt: goal.createTime || '',
-    clockInTime: goal.clockInTime || '',
+    status: STATUS_FROM_API[Number(goal.status)] || '',
   };
 }
 
@@ -51,9 +53,8 @@ function loadTags() {
 
 function loadPlans() {
   return Promise.all([backend.getGoals(), loadTags()]).then(([goals, tags]) => {
-    const now = new Date();
     return (goals || [])
-      .map((goal) => planUtil.decorate(mapGoal(goal, tags), tags, now))
+      .map((goal) => planUtil.decorate(mapGoal(goal, tags), tags))
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   });
 }
@@ -72,17 +73,15 @@ function savePlan(input) {
   return Promise.all([loadTags(), key ? loadPlans() : Promise.resolve([])]).then(([tags, plans]) => {
     const current = key ? plans.find((item) => item.id === key) : null;
     if (key && !current) return Promise.reject(new Error('计划不存在'));
-    const checked = planUtil.validatePlan(input, current ? current.checkedCount : 0, tags);
+    const checked = planUtil.validatePlan(input, tags);
     if (Object.keys(checked.errors).length) {
       return { ok: false, errors: checked.errors };
     }
     const value = checked.value;
     const payload = {
       remark: value.name,
-      clockInTime: datetime.startOfDay((current && current.clockInTime) || new Date()),
-      clockOutTime: datetime.endOfDay(value.deadline),
-      labelId: toNumberId(value.tagId),
-      targetClockInCount: value.targetCount,
+      expirationTime: datetime.endOfDay(value.deadline),
+      labelId: value.tagId ? toNumberId(value.tagId) : null,
       clockInCycle: CYCLE_TO_API[value.cycle],
     };
     const saved = current
@@ -156,7 +155,7 @@ function getProfile() {
   const user = session.user || {};
   return backend.getGoals().then((goals) => {
     const plans = (goals || []).map((goal) => mapGoal(goal, []));
-    const counts = planUtil.summarize(plans, new Date());
+    const counts = planUtil.summarize(plans);
     const avatarUrl = user.avatarUrl || '';
     return {
       loggedIn: true,

@@ -8,6 +8,7 @@
     "pages/checkin/list",
     "pages/tags/list",
     "pages/mine/mine",
+    "pages/login/login",
     "pages/checkin/edit",
     "pages/tags/edit"
   ],

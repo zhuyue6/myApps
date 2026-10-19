@@ -1,0 +1,28 @@
+.hero {
+  padding: 24rpx 8rpx 36rpx;
+}
+
+.hero-title {
+  font-size: 44rpx;
+  font-weight: 600;
+  color: #1c2834;
+}
+
+.hero-desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #8b98a8;
+  line-height: 1.5;
+}
+
+.sex {
+  padding: 0 28rpx 20rpx;
+}
+
+.switch {
+  margin-top: 28rpx;
+  text-align: center;
+  color: #5a8fc7;
+  font-size: 28rpx;
+  font-weight: 600;
+}

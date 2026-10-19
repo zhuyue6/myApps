@@ -1,4 +1,5 @@
 const api = require('../../api/index');
+const auth = require('../../utils/auth');
 
 Page({
   data: {
@@ -12,6 +13,10 @@ Page({
 
   onShow() {
     this.syncTab();
+    if (!auth.ensureLogin()) {
+      this.setData({ loaded: true, needLogin: true, plans: [] });
+      return;
+    }
     this.load();
   },
 
@@ -38,7 +43,11 @@ Page({
         needLogin,
         plans: needLogin ? [] : this.data.plans,
       });
-      if (!needLogin) wx.showToast({ title: error.message || '加载失败', icon: 'none' });
+      if (needLogin) {
+        auth.goLogin({ redirect: '/pages/checkin/list' });
+        return;
+      }
+      wx.showToast({ title: error.message || '加载失败', icon: 'none' });
     });
   },
 
@@ -59,10 +68,12 @@ Page({
   },
 
   onCreate() {
+    if (!auth.ensureLogin()) return;
     wx.navigateTo({ url: '/pages/checkin/edit' });
   },
 
   onOpen(event) {
+    if (!auth.ensureLogin()) return;
     const id = event.currentTarget.dataset.id;
     if (!id) return;
     wx.navigateTo({ url: `/pages/checkin/edit?id=${id}` });
@@ -99,5 +110,9 @@ Page({
     }).then(() => {
       this.checking = false;
     });
+  },
+
+  onGoLogin() {
+    auth.goLogin({ redirect: '/pages/checkin/list' });
   },
 });

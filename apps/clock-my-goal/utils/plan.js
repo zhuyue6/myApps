@@ -1,5 +1,6 @@
 /**
- * 0.1 计划规则：状态由系统计算，周期只展示，次数不按周期清零。
+ * 计划展示：状态使用接口返回值（1 进行中 / 2 已完成 / 3 已过期）。
+ * 目标次数由服务端按周期与截止时间计算，客户端只展示。
  */
 const datetime = require('./datetime');
 
@@ -29,15 +30,6 @@ const STATUS_HELP = {
 
 const DEFAULT_NICKNAME = '打卡用户';
 
-function resolveStatus(plan, now) {
-  const checked = Number(plan.checkedCount) || 0;
-  const target = Number(plan.targetCount) || 0;
-  if (target > 0 && checked >= target) return 'completed';
-  const deadline = datetime.parseDateTime(plan.deadline);
-  if (deadline && now.getTime() > deadline.getTime()) return 'expired';
-  return 'ongoing';
-}
-
 function percentOf(plan) {
   const checked = Number(plan.checkedCount) || 0;
   const target = Number(plan.targetCount) || 0;
@@ -45,16 +37,16 @@ function percentOf(plan) {
   return Math.min(100, Math.round((checked / target) * 100));
 }
 
-function decorate(plan, tags, now) {
+function decorate(plan, tags) {
   const tag = (tags || []).find((item) => item.id === plan.tagId);
-  const status = resolveStatus(plan, now);
+  const status = plan.status;
   return {
     ...plan,
     status,
-    statusText: STATUS_TEXT[status],
-    statusHelp: STATUS_HELP[status],
+    statusText: STATUS_TEXT[status] || '',
+    statusHelp: STATUS_HELP[status] || '',
     cardClass: status === 'completed' ? 'done' : status === 'expired' ? 'expired' : '',
-    pillClass: status === 'completed' ? 'done' : status === 'expired' ? 'expired' : 'go',
+    pillClass: status === 'completed' ? 'done' : status === 'expired' ? 'expired' : status === 'ongoing' ? 'go' : '',
     cycleText: CYCLE_TEXT[plan.cycle] || '',
     tagText: tag ? `${tag.type} / ${tag.name}` : '',
     percent: percentOf(plan),
@@ -63,31 +55,16 @@ function decorate(plan, tags, now) {
   };
 }
 
-function parseTargetCount(value) {
-  const raw = String(value == null ? '' : value).trim();
-  if (!/^\d+$/.test(raw)) return null;
-  const count = Number(raw);
-  if (!Number.isSafeInteger(count) || count <= 0) return null;
-  return count;
-}
-
 /**
- * @param {{name?:string,deadline?:string,cycle?:string,targetCount?:string|number,tagId?:string}} input
- * @param {number} checkedCount 编辑时已打卡次数；新增传 0
+ * @param {{name?:string,deadline?:string,cycle?:string,tagId?:string}} input
  * @param {{id:string}[]} tags
  */
-function validatePlan(input, checkedCount, tags) {
+function validatePlan(input, tags) {
   const errors = {};
   const name = (input.name || '').trim();
   if (!name) errors.name = '请填写名称';
   if (!datetime.parseDateTime(input.deadline)) errors.deadline = '请选择截止时间';
   if (!CYCLE_TEXT[input.cycle]) errors.cycle = '请选择周期';
-  const targetCount = parseTargetCount(input.targetCount);
-  if (targetCount == null) {
-    errors.targetCount = '请输入大于 0 的整数';
-  } else if (targetCount < (Number(checkedCount) || 0)) {
-    errors.targetCount = '目标次数不能小于已打卡次数';
-  }
   const tagId = input.tagId || '';
   if (tagId && !(tags || []).some((item) => item.id === tagId)) {
     errors.tag = '请重新选择标签';
@@ -98,7 +75,6 @@ function validatePlan(input, checkedCount, tags) {
       name,
       deadline: input.deadline || '',
       cycle: input.cycle || '',
-      targetCount: targetCount || 0,
       tagId,
     },
   };
@@ -124,10 +100,10 @@ function validateTag(input, tags, selfId) {
   return { errors, value: { type, name } };
 }
 
-function summarize(plans, now) {
+function summarize(plans) {
   const counts = { ongoing: 0, completed: 0, expired: 0 };
   (plans || []).forEach((plan) => {
-    counts[resolveStatus(plan, now)] += 1;
+    if (counts[plan.status] != null) counts[plan.status] += 1;
   });
   return counts;
 }
@@ -138,10 +114,8 @@ module.exports = {
   STATUS_TEXT,
   STATUS_HELP,
   DEFAULT_NICKNAME,
-  resolveStatus,
   percentOf,
   decorate,
-  parseTargetCount,
   validatePlan,
   validateTag,
   summarize,

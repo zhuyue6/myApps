@@ -2,9 +2,11 @@
  * clock-in-app 已有接口。页面不要直接 wx.request。
  * 用户：/user/login /user/register /user/logout /user/uploadAvatar
  * 标签：/label/createLabel /label/removeLabel /label/getLabelList /label/getLabelById
- * 目标：/goal/createGoal /goal/updateGoal /goal/getGoals /goal/removeGoal /goal/clockIn
+ * 目标：/goal/createGoal /goal/updateGoal /goal/getGoals /goal/removeGoal /goal/clockInGoal
  *
- * /goal/getGoal 是 GET 且要求 JSON body，小程序 GET 只会把参数放到查询串，这里不调用它。
+ * create/update 请求字段：remark、expirationTime、labelId、clockInCycle
+ * targetClockInCount 由服务端按周期与截止时间计算，客户端不再提交。
+ * getGoals 返回 status：1 进行中 / 2 已完成 / 3 已过期，客户端不再自行判断。
  * 详情从 /goal/getGoals 里按 id 取。
  */
 const config = require('./config');
@@ -121,9 +123,8 @@ function createGoal(payload) {
     method: 'POST',
     data: {
       remark: payload.remark || '',
-      clockInTime: payload.clockInTime,
-      clockOutTime: payload.clockOutTime || '',
-      labelId: payload.labelId || 0,
+      expirationTime: payload.expirationTime,
+      labelId: payload.labelId == null || payload.labelId === '' ? null : payload.labelId,
       clockInCycle: payload.clockInCycle,
     },
   });
@@ -136,9 +137,8 @@ function updateGoal(payload) {
     data: {
       id: payload.id,
       remark: payload.remark || '',
-      clockInTime: payload.clockInTime,
-      clockOutTime: payload.clockOutTime || '',
-      labelId: payload.labelId || 0,
+      expirationTime: payload.expirationTime,
+      labelId: payload.labelId == null || payload.labelId === '' ? null : payload.labelId,
       clockInCycle: payload.clockInCycle,
     },
   });
@@ -161,7 +161,7 @@ function removeGoal(id) {
 
 function clockIn(id) {
   return request({
-    url: '/goal/clockIn',
+    url: '/goal/clockInGoal',
     method: 'POST',
     data: { id },
   });

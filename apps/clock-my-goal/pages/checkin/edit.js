@@ -1,13 +1,13 @@
 const api = require('../../api/index');
+const auth = require('../../utils/auth');
 const datetime = require('../../utils/datetime');
-const { CYCLES, resolveStatus, STATUS_TEXT, STATUS_HELP, parseTargetCount } = require('../../utils/plan');
+const { CYCLES } = require('../../utils/plan');
 
 function emptyForm() {
   return {
     name: '',
     deadline: '',
     cycle: '',
-    targetCount: '',
     tagId: '',
   };
 }
@@ -19,6 +19,7 @@ Page({
     errors: {},
     cycles: CYCLES,
     tagText: '',
+    targetCount: 0,
     checkedCount: 0,
     createdAt: '',
     statusText: '',
@@ -32,6 +33,7 @@ Page({
   },
 
   onLoad(query) {
+    if (!auth.ensureLogin()) return;
     this.planId = query.id || '';
     const mode = this.planId ? 'edit' : 'create';
     this.setData({ mode });
@@ -48,10 +50,10 @@ Page({
           name: plan.name,
           deadline: plan.deadline,
           cycle: plan.cycle,
-          targetCount: String(plan.targetCount),
           tagId: plan.tagId || '',
         },
         tagText: plan.tagText,
+        targetCount: plan.targetCount,
         checkedCount: plan.checkedCount,
         createdAt: plan.createdAt,
         statusText: plan.statusText,
@@ -64,12 +66,6 @@ Page({
 
   onName(event) {
     this.setData({ 'form.name': event.detail.value, 'errors.name': '' });
-  },
-
-  onTarget(event) {
-    const targetCount = event.detail.value;
-    this.setData({ 'form.targetCount': targetCount, 'errors.targetCount': '' });
-    this.refreshStatus({ targetCount });
   },
 
   onCycle(event) {
@@ -128,23 +124,6 @@ Page({
       'form.deadline': deadline,
       'errors.deadline': '',
     });
-    this.refreshStatus({ deadline });
-  },
-
-  refreshStatus(partial) {
-    if (this.data.mode !== 'edit') return;
-    const form = { ...this.data.form, ...(partial || {}) };
-    const targetCount = parseTargetCount(form.targetCount);
-    if (targetCount == null) return;
-    const status = resolveStatus({
-      checkedCount: this.data.checkedCount,
-      targetCount,
-      deadline: form.deadline,
-    }, new Date());
-    this.setData({
-      statusText: STATUS_TEXT[status],
-      statusHelp: STATUS_HELP[status],
-    });
   },
 
   onOpenTag() {
@@ -193,7 +172,6 @@ Page({
       name: form.name,
       deadline: form.deadline,
       cycle: form.cycle,
-      targetCount: form.targetCount,
       tagId: form.tagId,
     }).then((result) => {
       if (!result.ok) {

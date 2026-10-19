@@ -1,4 +1,5 @@
 const api = require('../../api/index');
+const auth = require('../../utils/auth');
 
 Page({
   data: {
@@ -16,6 +17,7 @@ Page({
   },
 
   onLoad(query) {
+    if (!auth.ensureLogin()) return;
     this.tagId = query.id || '';
     const editing = !!this.tagId;
     this.setData({ editing });

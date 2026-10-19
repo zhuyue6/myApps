@@ -5,8 +5,9 @@
         <van-icon name="label-o" size="48px" color="#8eb4d8" />
       </view>
       <view class="empty-title">{{needLogin ? '请先登录' : '还没有标签'}}</view>
-      <view class="empty-desc">{{needLogin ? '登录后才能管理标签。请到「我的」登录。' : '标签用来给计划分类。计划可以不关联标签。'}}</view>
-      <button wx:if="{{!needLogin}}" class="btn" hover-class="btn-hover" bindtap="onCreate">新增标签</button>
+      <view class="empty-desc">{{needLogin ? '登录后才能管理标签' : '标签用来给计划分类。计划可以不关联标签。'}}</view>
+      <button wx:if="{{needLogin}}" class="btn" hover-class="btn-hover" bindtap="onGoLogin">去登录</button>
+      <button wx:else class="btn" hover-class="btn-hover" bindtap="onCreate">新增标签</button>
     </view>
   </block>
 

@@ -1,4 +1,5 @@
 const api = require('../../api/index');
+const auth = require('../../utils/auth');
 
 Page({
   data: {
@@ -10,6 +11,10 @@ Page({
   onShow() {
     const bar = typeof this.getTabBar === 'function' ? this.getTabBar() : null;
     if (bar) bar.setData({ selected: 1, hidden: false });
+    if (!auth.ensureLogin()) {
+      this.setData({ loaded: true, needLogin: true, tags: [] });
+      return;
+    }
     this.load();
   },
 
@@ -23,15 +28,21 @@ Page({
         needLogin,
         tags: needLogin ? [] : this.data.tags,
       });
-      if (!needLogin) wx.showToast({ title: error.message || '加载失败', icon: 'none' });
+      if (needLogin) {
+        auth.goLogin({ redirect: '/pages/tags/list' });
+        return;
+      }
+      wx.showToast({ title: error.message || '加载失败', icon: 'none' });
     });
   },
 
   onCreate() {
+    if (!auth.ensureLogin()) return;
     wx.navigateTo({ url: '/pages/tags/edit' });
   },
 
   onOpen(event) {
+    if (!auth.ensureLogin()) return;
     const id = event.currentTarget.dataset.id;
     if (!id) return;
     wx.navigateTo({ url: `/pages/tags/edit?id=${id}` });
@@ -54,5 +65,9 @@ Page({
         });
       },
     });
+  },
+
+  onGoLogin() {
+    auth.goLogin({ redirect: '/pages/tags/list' });
   },
 });

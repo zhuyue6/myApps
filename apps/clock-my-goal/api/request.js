@@ -5,6 +5,31 @@ const config = require('./config');
 
 const TOKEN_KEY = 'clock_in_token';
 const USER_KEY = 'clock_in_user';
+const LOGIN_PATH = '/pages/login/login';
+
+let loginRedirecting = false;
+
+function redirectToLogin() {
+  if (loginRedirecting) return;
+  try {
+    const pages = getCurrentPages();
+    const current = pages[pages.length - 1];
+    if (current && current.route === 'pages/login/login') return;
+  } catch (e) {
+    // App 启动早期可能没有页面栈
+  }
+  loginRedirecting = true;
+  wx.navigateTo({
+    url: LOGIN_PATH,
+    complete() {
+      loginRedirecting = false;
+    },
+    fail() {
+      loginRedirecting = false;
+      wx.reLaunch({ url: LOGIN_PATH });
+    },
+  });
+}
 
 function getToken() {
   try {
@@ -74,6 +99,7 @@ function request(options) {
         const code = body && typeof body.code === 'number' ? body.code : null;
         if (res.statusCode === 401 || code === 10006 || code === 10007) {
           setSession(null);
+          if (auth) redirectToLogin();
           reject(new Error((body && body.message) || '请先登录'));
           return;
         }
