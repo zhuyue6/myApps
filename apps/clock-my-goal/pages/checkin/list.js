@@ -13,8 +13,10 @@ Page({
 
   onShow() {
     this.syncTab();
-    if (!auth.ensureLogin()) {
+    if (!auth.isLoggedIn()) {
+      const quiet = auth.takeQuietHome();
       this.setData({ loaded: true, needLogin: true, plans: [] });
+      if (!quiet) auth.goLogin({ redirect: '/pages/checkin/list' });
       return;
     }
     this.load();
@@ -37,6 +39,10 @@ Page({
     return api.listPlans().then((plans) => {
       this.setData({ plans, loaded: true, needLogin: false });
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) {
+        this.setData({ loaded: true, needLogin: true, plans: [] });
+        return;
+      }
       const needLogin = /登录/.test(error.message || '');
       this.setData({
         loaded: true,
@@ -91,6 +97,7 @@ Page({
       success: (res) => {
         if (!res.confirm) return;
         api.removePlan(id).then(() => this.load()).catch((error) => {
+          if (auth.isAccountDisabled(error)) return;
           wx.showToast({ title: error.message || '删除失败', icon: 'none' });
         });
       },
@@ -106,6 +113,7 @@ Page({
       this.showBanner(`打卡成功，${updated.name} ${updated.checkedCount}/${updated.targetCount}`);
       return this.load();
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) return;
       wx.showToast({ title: error.message || '打卡失败', icon: 'none' });
     }).then(() => {
       this.checking = false;

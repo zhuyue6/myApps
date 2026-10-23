@@ -120,6 +120,7 @@ Page({
       wx.showToast({ title: '已登录', icon: 'success' });
       setTimeout(() => this.leave(), 300);
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) return;
       wx.showToast({ title: error.message || '操作失败', icon: 'none' });
     }).then(() => {
       this.submitting = false;

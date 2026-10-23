@@ -34,6 +34,7 @@ Page({
         'form.name': tag.name,
       });
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) return;
       wx.showToast({ title: error.message || '加载失败', icon: 'none' });
     });
   },
@@ -56,6 +57,7 @@ Page({
       this.setData({ types, showTypes: true });
     }).catch((error) => {
       wx.hideLoading();
+      if (auth.isAccountDisabled(error)) return;
       this.toast(error.message || '类型加载失败');
     }).then(() => {
       this.loadingTypes = false;
@@ -119,6 +121,7 @@ Page({
       wx.showToast({ title: '已保存', icon: 'success' });
       setTimeout(() => wx.navigateBack(), 400);
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) return;
       wx.showToast({ title: error.message || '保存失败', icon: 'none' });
     }).then(() => {
       this.saving = false;

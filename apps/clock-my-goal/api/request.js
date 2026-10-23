@@ -97,6 +97,15 @@ function request(options) {
       success(res) {
         const body = res.data;
         const code = body && typeof body.code === 'number' ? body.code : null;
+        if (code === 11004) {
+          setSession(null);
+          const auth = require('../utils/auth');
+          auth.promptAccountDisabled((body && body.message) || '该账号已被停用，暂时无法使用');
+          const error = new Error((body && body.message) || '该账号已被停用，暂时无法使用');
+          error.code = 11004;
+          reject(error);
+          return;
+        }
         if (res.statusCode === 401 || code === 10006 || code === 10007) {
           setSession(null);
           if (auth) redirectToLogin();

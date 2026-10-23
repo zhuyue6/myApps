@@ -60,6 +60,7 @@ Page({
         statusHelp: plan.statusHelp,
       });
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) return;
       wx.showToast({ title: error.message || '加载失败', icon: 'none' });
     });
   },
@@ -139,6 +140,7 @@ Page({
         sheetHeight,
       });
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) return;
       wx.showToast({ title: error.message || '标签加载失败', icon: 'none' });
     });
   },
@@ -181,6 +183,7 @@ Page({
       wx.showToast({ title: '已保存', icon: 'success' });
       setTimeout(() => wx.navigateBack(), 400);
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) return;
       wx.showToast({ title: error.message || '保存失败', icon: 'none' });
     }).then(() => {
       this.saving = false;

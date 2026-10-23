@@ -4,8 +4,12 @@
 const { getSession } = require('../api/request');
 
 const LOGIN_PATH = '/pages/login/login';
+const HOME_PATH = '/pages/checkin/list';
+const DISABLED_CODE = 11004;
 
 let redirecting = false;
+let disabledPrompting = false;
+let quietHome = false;
 
 function isLoggedIn() {
   return !!getSession().token;
@@ -45,6 +49,45 @@ function ensureLogin() {
   return false;
 }
 
+function isAccountDisabled(error) {
+  return !!(error && Number(error.code) === DISABLED_CODE);
+}
+
+function takeQuietHome() {
+  if (!quietHome) return false;
+  quietHome = false;
+  return true;
+}
+
+/** 账号已停用：弹框确认后回到打卡首页，不再自动进入登录页。 */
+function promptAccountDisabled(message) {
+  if (disabledPrompting) return;
+  disabledPrompting = true;
+  wx.showModal({
+    title: '账号已停用',
+    content: message || '该账号已被停用，暂时无法使用',
+    showCancel: false,
+    confirmText: '知道了',
+    complete() {
+      disabledPrompting = false;
+      let onHome = false;
+      const pages = getCurrentPages();
+      const current = pages[pages.length - 1];
+      if (current.route === 'pages/login/login') {
+        // 如果当前是登录页面，则不跳转
+        return;
+      }
+      // 其余跳转登录页面
+      wx.switchTab({
+        url: LOGIN_PATH,
+        fail() {
+          wx.reLaunch({ url: LOGIN_PATH });
+        },
+      });
+    },
+  });
+}
+
 function afterLogin() {
   const pages = getCurrentPages();
   if (pages.length > 1) {
@@ -56,9 +99,13 @@ function afterLogin() {
 
 module.exports = {
   LOGIN_PATH,
+  HOME_PATH,
   isLoggedIn,
   isLoginPage,
   goLogin,
   ensureLogin,
   afterLogin,
+  isAccountDisabled,
+  takeQuietHome,
+  promptAccountDisabled,
 };

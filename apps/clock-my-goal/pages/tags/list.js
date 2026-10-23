@@ -22,6 +22,10 @@ Page({
     return api.listTags().then((tags) => {
       this.setData({ tags, loaded: true, needLogin: false });
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) {
+        this.setData({ loaded: true, needLogin: true, tags: [] });
+        return;
+      }
       const needLogin = /登录/.test(error.message || '');
       this.setData({
         loaded: true,
@@ -61,6 +65,7 @@ Page({
       success: (res) => {
         if (!res.confirm) return;
         api.removeTag(id).then(() => this.load()).catch((error) => {
+          if (auth.isAccountDisabled(error)) return;
           wx.showToast({ title: error.message || '删除失败', icon: 'none' });
         });
       },

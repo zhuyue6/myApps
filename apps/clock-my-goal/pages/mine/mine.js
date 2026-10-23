@@ -55,6 +55,17 @@ Page({
         expired: profile.expired,
       });
     }).catch((error) => {
+      if (auth.isAccountDisabled(error)) {
+        this.setData({
+          loggedIn: false,
+          nickname: '',
+          avatarUrl: '',
+          ongoing: 0,
+          completed: 0,
+          expired: 0,
+        });
+        return;
+      }
       const needLogin = /登录/.test(error.message || '');
       this.setData({
         loggedIn: false,
