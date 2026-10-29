@@ -3,7 +3,7 @@
  * 登录：POST /auth/login  POST /auth/register  POST /auth/logout
  * 头像：POST /users/{id}/avatar
  * 标签：POST /labels  PATCH /labels/{id}  DELETE /labels/{id}  GET /labels  GET /labels/{id}
- * 目标：POST /goals  PATCH /goals/{id}  GET /goals  DELETE /goals/{id}  POST /goals/{id}/clockIn
+ * 目标：POST /goals  PATCH /goals/{id}  GET /goals  GET /goals/{id}  DELETE /goals/{id}  POST /goals/{id}/clockIn
  *
  * create/update 请求字段：goalName、remark、expirationTime、labelId、clockInCycle
  * targetClockInCount 由服务端按周期与截止时间计算，客户端不再提交。
@@ -198,6 +198,13 @@ function getGoals() {
   });
 }
 
+function getGoal(id) {
+  return request({
+    url: `/goals/${id}`,
+    method: 'GET',
+  });
+}
+
 function removeGoal(id) {
   return request({
     url: `/goals/${id}`,
@@ -229,6 +236,7 @@ module.exports = {
   createGoal,
   updateGoal,
   getGoals,
+  getGoal,
   removeGoal,
   clockIn,
 };

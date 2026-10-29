@@ -66,13 +66,17 @@ function listPlans() {
 
 function getPlan(id) {
   const key = asId(id);
-  return loadPlans().then((plans) => plans.find((item) => item.id === key) || null);
+  if (!key) return Promise.resolve(null);
+  return Promise.all([backend.getGoal(toNumberId(key)), loadTags()]).then(([goal, tags]) => {
+    if (!goal) return null;
+    return planUtil.decorate(mapGoal(goal, tags), tags);
+  });
 }
 
 function savePlan(input) {
   const key = asId(input.id);
-  return Promise.all([loadTags(), key ? loadPlans() : Promise.resolve([])]).then(([tags, plans]) => {
-    const current = key ? plans.find((item) => item.id === key) : null;
+  const currentGoal = key ? backend.getGoal(toNumberId(key)) : Promise.resolve(null);
+  return Promise.all([loadTags(), currentGoal]).then(([tags, current]) => {
     if (key && !current) return Promise.reject(new Error('计划不存在'));
     const checked = planUtil.validatePlan(input, tags);
     if (Object.keys(checked.errors).length) {
