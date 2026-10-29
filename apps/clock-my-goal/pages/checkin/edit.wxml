@@ -42,6 +42,25 @@
       <text class="chev">›</text>
     </view>
     <view class="err" wx:if="{{errors.tag}}">{{errors.tag}}</view>
+
+    <view class="cell remark-cell no-line">
+      <view class="remark-head">
+        <view class="label">备注<text class="opt">选填</text></view>
+        <text class="remark-count">{{remarkLen}}/500</text>
+      </view>
+      <textarea
+        class="remark-input"
+        value="{{form.remark}}"
+        maxlength="500"
+        placeholder="请输入备注，500字以内"
+        placeholder-class="ph"
+        bindinput="onRemark"
+        auto-height
+        cursor-spacing="120"
+        show-confirm-bar="{{false}}"
+      />
+    </view>
+    <view class="err" wx:if="{{errors.remark}}">{{errors.remark}}</view>
   </view>
 
   <block wx:if="{{mode === 'edit'}}">

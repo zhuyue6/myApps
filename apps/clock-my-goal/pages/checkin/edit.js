@@ -6,6 +6,7 @@ const { CYCLES } = require('../../utils/plan');
 function emptyForm() {
   return {
     name: '',
+    remark: '',
     deadline: '',
     cycle: '',
     tagId: '',
@@ -19,6 +20,7 @@ Page({
     errors: {},
     cycles: CYCLES,
     tagText: '',
+    remarkLen: 0,
     targetCount: 0,
     checkedCount: 0,
     createdAt: '',
@@ -48,11 +50,13 @@ Page({
       this.setData({
         form: {
           name: plan.name,
+          remark: plan.remark || '',
           deadline: plan.deadline,
           cycle: plan.cycle,
           tagId: plan.tagId || '',
         },
         tagText: plan.tagText,
+        remarkLen: (plan.remark || '').length,
         targetCount: plan.targetCount,
         checkedCount: plan.checkedCount,
         createdAt: plan.createdAt,
@@ -67,6 +71,12 @@ Page({
 
   onName(event) {
     this.setData({ 'form.name': event.detail.value, 'errors.name': '' });
+  },
+
+  onRemark(event) {
+    const remark = event.detail.value || '';
+    this._remark = remark;
+    this.setData({ remarkLen: remark.length, 'errors.remark': '' });
   },
 
   onCycle(event) {
@@ -172,6 +182,7 @@ Page({
     api.savePlan({
       id: this.planId,
       name: form.name,
+      remark: this._remark != null ? this._remark : form.remark,
       deadline: form.deadline,
       cycle: form.cycle,
       tagId: form.tagId,

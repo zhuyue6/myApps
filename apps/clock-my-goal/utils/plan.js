@@ -56,13 +56,15 @@ function decorate(plan, tags) {
 }
 
 /**
- * @param {{name?:string,deadline?:string,cycle?:string,tagId?:string}} input
+ * @param {{name?:string,remark?:string,deadline?:string,cycle?:string,tagId?:string}} input
  * @param {{id:string}[]} tags
  */
 function validatePlan(input, tags) {
   const errors = {};
   const name = (input.name || '').trim();
+  const remark = (input.remark || '').trim();
   if (!name) errors.name = '请填写名称';
+  if (remark.length > 500) errors.remark = '备注不能超过500字';
   if (!datetime.parseDateTime(input.deadline)) errors.deadline = '请选择截止时间';
   if (!CYCLE_TEXT[input.cycle]) errors.cycle = '请选择周期';
   const tagId = input.tagId || '';
@@ -73,6 +75,7 @@ function validatePlan(input, tags) {
     errors,
     value: {
       name,
+      remark,
       deadline: input.deadline || '',
       cycle: input.cycle || '',
       tagId,

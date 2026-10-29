@@ -5,3 +5,35 @@
 .ph {
   color: #b4bec8;
 }
+
+.remark-cell {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.remark-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.remark-head .label {
+  width: auto;
+}
+
+.remark-count {
+  color: #8b98a8;
+  font-size: 24rpx;
+}
+
+.remark-input {
+  width: 100%;
+  min-height: 160rpx;
+  margin-top: 12rpx;
+  padding: 0;
+  font-size: 30rpx;
+  line-height: 1.5;
+  color: #1c2834;
+  box-sizing: border-box;
+}

@@ -5,7 +5,7 @@
  * 标签：POST /labels  PATCH /labels/{id}  DELETE /labels/{id}  GET /labels  GET /labels/{id}
  * 目标：POST /goals  PATCH /goals/{id}  GET /goals  DELETE /goals/{id}  POST /goals/{id}/clockIn
  *
- * create/update 请求字段：remark、expirationTime、labelId、clockInCycle
+ * create/update 请求字段：goalName、remark、expirationTime、labelId、clockInCycle
  * targetClockInCount 由服务端按周期与截止时间计算，客户端不再提交。
  * 目标列表返回 status：1 进行中 / 2 已完成 / 3 已过期，客户端不再自行判断。
  */
@@ -167,6 +167,7 @@ function getLabelById(id) {
 
 function goalBody(payload) {
   return {
+    goalName: payload.goalName || '',
     remark: payload.remark || '',
     expirationTime: payload.expirationTime,
     labelId: payload.labelId == null || payload.labelId === '' ? null : payload.labelId,

@@ -36,7 +36,8 @@ function mapGoal(goal, tags) {
     : null;
   return {
     id: asId(goal.id),
-    name: goal.remark || '',
+    name: goal.goalName || '',
+    remark: goal.remark || '',
     deadline: goal.expirationTime || '',
     cycle: CYCLE_FROM_API[goal.clockInCycle] || '',
     targetCount: goal.targetClockInCount || 0,
@@ -79,7 +80,8 @@ function savePlan(input) {
     }
     const value = checked.value;
     const payload = {
-      remark: value.name,
+      goalName: value.name,
+      remark: value.remark,
       expirationTime: datetime.endOfDay(value.deadline),
       labelId: value.tagId ? toNumberId(value.tagId) : null,
       clockInCycle: CYCLE_TO_API[value.cycle],
