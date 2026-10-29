@@ -1,20 +1,20 @@
 /**
- * clock-in-app 已有接口。页面不要直接 wx.request。
- * 用户：/user/login /user/register /user/logout /user/uploadAvatar
- * 标签：/label/createLabel /label/removeLabel /label/getLabelList /label/getLabelById
- * 目标：/goal/createGoal /goal/updateGoal /goal/getGoals /goal/removeGoal /goal/clockInGoal
+ * 页面不要直接 wx.request。
+ * 登录：POST /auth/login  POST /auth/register  POST /auth/logout
+ * 头像：POST /users/{id}/avatar
+ * 标签：POST /labels  PATCH /labels/{id}  DELETE /labels/{id}  GET /labels  GET /labels/{id}
+ * 目标：POST /goals  PATCH /goals/{id}  GET /goals  DELETE /goals/{id}  POST /goals/{id}/clockIn
  *
  * create/update 请求字段：remark、expirationTime、labelId、clockInCycle
  * targetClockInCount 由服务端按周期与截止时间计算，客户端不再提交。
- * getGoals 返回 status：1 进行中 / 2 已完成 / 3 已过期，客户端不再自行判断。
- * 详情从 /goal/getGoals 里按 id 取。
+ * 目标列表返回 status：1 进行中 / 2 已完成 / 3 已过期，客户端不再自行判断。
  */
 const config = require('./config');
-const { request, getToken, getSession, setSession } = require('./request');
+const { request, getSession, setSession, patchSessionUser } = require('./request');
 
 function login(userName, password) {
   return request({
-    url: '/user/login',
+    url: '/auth/login',
     method: 'POST',
     data: { userName, password },
     auth: false,
@@ -26,7 +26,7 @@ function login(userName, password) {
 
 function register(payload) {
   return request({
-    url: '/user/register',
+    url: '/auth/register',
     method: 'POST',
     data: {
       userName: payload.userName,
@@ -40,7 +40,7 @@ function register(payload) {
 
 function logout() {
   return request({
-    url: '/user/logout',
+    url: '/auth/logout',
     method: 'POST',
   }).then(
     (data) => {
@@ -54,30 +54,72 @@ function logout() {
   );
 }
 
+function resolveAvatarUrl(avatarUrl) {
+  if (!avatarUrl) return '';
+  if (/^https?:\/\//.test(avatarUrl) || avatarUrl.indexOf('wxfile://') === 0) return avatarUrl;
+  const raw = String(avatarUrl);
+  
+  const path = `${config.baseURL.replace(/\/$/, '')}${raw}`
+  return path;
+}
+
+function getUser(id) {
+  return request({
+    url: `/users/${id}`,
+    method: 'GET',
+  });
+}
+
 function uploadAvatar(filePath) {
-  const token = getToken();
+  const session = getSession();
+  const token = session.token;
+  const userId = session.user && session.user.id;
+  if (!userId) {
+    return Promise.reject(new Error('请先登录'));
+  }
   return new Promise((resolve, reject) => {
     wx.uploadFile({
-      url: `${config.baseURL}/user/uploadAvatar`,
+      url: `${config.baseURL}/users/${userId}/avatar`,
       filePath,
       name: 'file',
       header: token ? { Authorization: `Bearer ${token}` } : {},
-      timeout: 10000,
+      timeout: 20000,
       success(res) {
         let body = res.data;
         if (typeof body === 'string') {
           try {
             body = JSON.parse(body);
           } catch (e) {
-            reject(new Error('上传失败'));
+            reject(new Error(res.statusCode === 413 ? '图片太大，请换一张较小的图片' : '上传失败'));
             return;
           }
         }
-        if (!body || body.code !== 0) {
-          reject(new Error((body && body.message) || '上传失败'));
+        const code = body && typeof body.code === 'number' ? body.code : null;
+        if (code === 11004) {
+          setSession(null);
+          const auth = require('../utils/auth');
+          auth.promptAccountDisabled((body && body.message) || '该账号已被停用，暂时无法使用');
+          const error = new Error((body && body.message) || '该账号已被停用，暂时无法使用');
+          error.code = 11004;
+          reject(error);
           return;
         }
-        resolve(body.data);
+        if (res.statusCode === 401 || code === 10004 || code === 10005 || code === 11001) {
+          setSession(null);
+          const auth = require('../utils/auth');
+          auth.goLogin({ redirect: '/pages/mine/mine' });
+          reject(new Error((body && body.message) || '请先登录'));
+          return;
+        }
+        if (!body || code !== 0) {
+          reject(new Error((body && body.message) || (res.statusCode === 413 ? '图片太大，请换一张较小的图片' : '上传失败')));
+          return;
+        }
+        const avatarUrl = typeof body.data === 'string'
+          ? body.data
+          : (body.data && body.data.avatarUrl) || '';
+        if (avatarUrl) patchSessionUser({ avatarUrl });
+        resolve(avatarUrl);
       },
       fail() {
         reject(new Error('网络异常，请稍后重试'));
@@ -88,92 +130,98 @@ function uploadAvatar(filePath) {
 
 function createLabel(labelName, labelType) {
   return request({
-    url: '/label/createLabel',
+    url: '/labels',
     method: 'POST',
+    data: { labelName, labelType },
+  });
+}
+
+function updateLabel(id, labelName, labelType) {
+  return request({
+    url: `/labels/${id}`,
+    method: 'PATCH',
     data: { labelName, labelType },
   });
 }
 
 function removeLabel(id) {
   return request({
-    url: '/label/removeLabel',
-    method: 'POST',
-    data: { id },
+    url: `/labels/${id}`,
+    method: 'DELETE',
   });
 }
 
 function getLabelList() {
   return request({
-    url: '/label/getLabelList',
+    url: '/labels',
     method: 'GET',
   });
 }
 
 function getLabelById(id) {
   return request({
-    url: '/label/getLabelById',
+    url: `/labels/${id}`,
     method: 'GET',
-    data: { id },
   });
+}
+
+function goalBody(payload) {
+  return {
+    remark: payload.remark || '',
+    expirationTime: payload.expirationTime,
+    labelId: payload.labelId == null || payload.labelId === '' ? null : payload.labelId,
+    clockInCycle: payload.clockInCycle,
+  };
 }
 
 function createGoal(payload) {
   return request({
-    url: '/goal/createGoal',
+    url: '/goals',
     method: 'POST',
-    data: {
-      remark: payload.remark || '',
-      expirationTime: payload.expirationTime,
-      labelId: payload.labelId == null || payload.labelId === '' ? null : payload.labelId,
-      clockInCycle: payload.clockInCycle,
-    },
+    data: goalBody(payload),
   });
 }
 
 function updateGoal(payload) {
   return request({
-    url: '/goal/updateGoal',
-    method: 'POST',
-    data: {
-      id: payload.id,
-      remark: payload.remark || '',
-      expirationTime: payload.expirationTime,
-      labelId: payload.labelId == null || payload.labelId === '' ? null : payload.labelId,
-      clockInCycle: payload.clockInCycle,
-    },
+    url: `/goals/${payload.id}`,
+    method: 'PATCH',
+    data: goalBody(payload),
   });
 }
 
 function getGoals() {
   return request({
-    url: '/goal/getGoals',
+    url: '/goals',
     method: 'GET',
   });
 }
 
 function removeGoal(id) {
   return request({
-    url: '/goal/removeGoal',
-    method: 'POST',
-    data: { id },
+    url: `/goals/${id}`,
+    method: 'DELETE',
   });
 }
 
 function clockIn(id) {
   return request({
-    url: '/goal/clockInGoal',
+    url: `/goals/${id}/clockIn`,
     method: 'POST',
-    data: { id },
   });
 }
 
 module.exports = {
   getSession,
+  patchSessionUser,
+  resolveAvatarUrl,
   login,
   register,
   logout,
+  getUser,
   uploadAvatar,
   createLabel,
+  updateLabel,
   removeLabel,
   getLabelList,
   getLabelById,

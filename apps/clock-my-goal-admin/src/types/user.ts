@@ -13,11 +13,12 @@ export interface MiniUserPlan {
   id: number
   name: string
   cycle: number
-  checkedCount: number
-  targetCount: number
+  clockInCount: number
+  targetClockInCount: number
   status: number
-  deadline: string
-  createdAt: string
+  expireTime: string
+  createTime: string
+  updateTime?: string
 }
 
 export interface MiniUserDetail extends MiniUser {

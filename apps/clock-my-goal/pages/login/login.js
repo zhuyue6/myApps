@@ -18,6 +18,7 @@ Page({
     mode: 'login',
     account: emptyAccount(),
     errors: {},
+    focusField: '',
     sexes: [
       { value: 1, label: '男' },
       { value: 2, label: '女' },
@@ -60,10 +61,67 @@ Page({
   onAccount(event) {
     const field = event.currentTarget.dataset.field;
     if (!field) return;
-    this.setData({
+    const patch = {
       [`account.${field}`]: event.detail.value,
       [`errors.${field}`]: '',
-    });
+    };
+    if (!this._pendingFocus || this._pendingFocus === field) {
+      patch.focusField = field;
+    }
+    this.setData(patch);
+  },
+
+  // 普通输入框和密码框是两套原生组件。从已聚焦的输入框点到另一个时，
+  // 第一次点击只会收起键盘，目标框拿不到焦点。等键盘收起后再把 focus 拉起来。
+  onFieldTap(event) {
+    const field = event.currentTarget.dataset.field;
+    if (!field || field === this.data.focusField) return;
+    const switching = this.data.focusField
+      || (this._blurAt && Date.now() - this._blurAt < 400);
+    if (!switching) {
+      this.setData({ focusField: field });
+      return;
+    }
+    this._pendingFocus = field;
+    this.queueFocus(field);
+  },
+
+  onFieldFocus(event) {
+    const field = event.currentTarget.dataset.field;
+    if (!field || this.data.focusField === field) return;
+    this.setData({ focusField: field });
+  },
+
+  onFieldBlur(event) {
+    const field = event.currentTarget.dataset.field;
+    if (!field) return;
+    this._blurAt = Date.now();
+    if (field === this._pendingFocus) return;
+    if (this.data.focusField === field) {
+      this.setData({ focusField: '' });
+    }
+  },
+
+  queueFocus(field) {
+    if (this._focusTimer) clearTimeout(this._focusTimer);
+    if (this._settleTimer) clearTimeout(this._settleTimer);
+    this._focusTimer = setTimeout(() => {
+      this._focusTimer = null;
+      if (this._pendingFocus !== field) return;
+      this.setData({ focusField: field });
+      this._settleTimer = setTimeout(() => {
+        this._settleTimer = null;
+        if (this._pendingFocus === field) this._pendingFocus = '';
+      }, 350);
+    }, 300);
+  },
+
+  clearFocusTimers() {
+    if (this._focusTimer) clearTimeout(this._focusTimer);
+    if (this._settleTimer) clearTimeout(this._settleTimer);
+    this._focusTimer = null;
+    this._settleTimer = null;
+    this._pendingFocus = '';
   },
 
   onSex(event) {
@@ -72,7 +130,12 @@ Page({
 
   onToggleMode() {
     const mode = this.data.mode === 'login' ? 'register' : 'login';
-    this.setData({ mode, errors: {}, account: emptyAccount() });
+    this.clearFocusTimers();
+    this.setData({ mode, errors: {}, account: emptyAccount(), focusField: '' });
+  },
+
+  onUnload() {
+    this.clearFocusTimers();
   },
 
   validateAccount() {

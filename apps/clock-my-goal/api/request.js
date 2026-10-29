@@ -77,6 +77,17 @@ function setSession(user) {
   }
 }
 
+function patchSessionUser(partial) {
+  const session = getSession();
+  if (!session.user || !partial) return null;
+  const next = Object.assign({}, session.user);
+  Object.keys(partial).forEach((key) => {
+    if (partial[key] !== undefined) next[key] = partial[key];
+  });
+  wx.setStorageSync(USER_KEY, next);
+  return next;
+}
+
 function request(options) {
   const method = options.method || 'GET';
   const auth = options.auth !== false;
@@ -106,7 +117,7 @@ function request(options) {
           reject(error);
           return;
         }
-        if (res.statusCode === 401 || code === 10006 || code === 10007) {
+        if (res.statusCode === 401 || code === 10004 || code === 10005 || code === 11001) {
           setSession(null);
           if (auth) redirectToLogin();
           reject(new Error((body && body.message) || '请先登录'));
@@ -137,5 +148,6 @@ module.exports = {
   setToken,
   getSession,
   setSession,
+  patchSessionUser,
   request,
 };

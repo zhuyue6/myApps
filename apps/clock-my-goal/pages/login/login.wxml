@@ -5,7 +5,7 @@
   </view>
 
   <view class="group">
-    <view class="cell">
+    <view class="cell" data-field="userName" bindtap="onFieldTap">
       <view class="label">用户名<text class="req">*</text></view>
       <input
         class="field"
@@ -13,13 +13,17 @@
         placeholder="中文、字母或·"
         placeholder-class="ph"
         data-field="userName"
+        focus="{{focusField === 'userName'}}"
+        bindtap="onFieldTap"
+        bindfocus="onFieldFocus"
+        bindblur="onFieldBlur"
         bindinput="onAccount"
         cursor-spacing="80"
       />
     </view>
     <view class="err" wx:if="{{errors.userName}}">{{errors.userName}}</view>
 
-    <view class="cell {{mode === 'login' ? 'no-line' : ''}}">
+    <view class="cell {{mode === 'login' ? 'no-line' : ''}}" data-field="password" bindtap="onFieldTap">
       <view class="label">密码<text class="req">*</text></view>
       <input
         class="field"
@@ -28,6 +32,10 @@
         placeholder="6到20位"
         placeholder-class="ph"
         data-field="password"
+        focus="{{focusField === 'password'}}"
+        bindtap="onFieldTap"
+        bindfocus="onFieldFocus"
+        bindblur="onFieldBlur"
         bindinput="onAccount"
         cursor-spacing="80"
       />
@@ -48,7 +56,7 @@
           hover-class="btn-hover"
         >{{item.label}}</button>
       </view>
-      <view class="cell no-line">
+      <view class="cell no-line" data-field="age" bindtap="onFieldTap">
         <view class="label">年龄<text class="opt">选填</text></view>
         <input
           class="field"
@@ -57,6 +65,10 @@
           placeholder="0到150"
           placeholder-class="ph"
           data-field="age"
+          focus="{{focusField === 'age'}}"
+          bindtap="onFieldTap"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
           bindinput="onAccount"
           cursor-spacing="80"
         />

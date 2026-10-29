@@ -1,5 +1,4 @@
 <view class="page with-action">
-  <view class="help top-help" wx:if="{{editing}}">已有标签暂时不能修改，后端还没有更新标签的接口。</view>
   <view class="group">
     <view class="cell" bindtap="onToggleTypes">
       <view class="label">标签类型<text class="req">*</text></view>
@@ -18,7 +17,6 @@
         <view class="check"></view>
       </view>
       <view
-        wx:if="{{!editing}}"
         class="option option-add {{creatingType ? 'on' : ''}}"
         data-action="create"
         bindtap="onSelectType"

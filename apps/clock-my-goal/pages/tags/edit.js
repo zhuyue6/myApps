@@ -9,10 +9,9 @@ Page({
       name: '',
     },
     errors: {},
-    editing: false,
     types: [],
     showTypes: false,
-    /** 仅新增标签时可选；选中后才允许填写新建类型 */
+    /** 选中「新增」后才允许填写新建类型 */
     creatingType: false,
   },
 
@@ -20,7 +19,6 @@ Page({
     if (!auth.ensureLogin()) return;
     this.tagId = query.id || '';
     const editing = !!this.tagId;
-    this.setData({ editing });
     wx.setNavigationBarTitle({ title: editing ? '编辑标签' : '新增标签' });
     if (!editing) return;
     api.getTag(this.tagId).then((tag) => {
@@ -49,11 +47,6 @@ Page({
     wx.showLoading({ title: '加载中', mask: true });
     api.listTagTypes().then((types) => {
       wx.hideLoading();
-      if (!types.length && this.data.editing) {
-        this.setData({ types: [], showTypes: false });
-        this.toast('还没有已有类型');
-        return;
-      }
       this.setData({ types, showTypes: true });
     }).catch((error) => {
       wx.hideLoading();
@@ -71,7 +64,7 @@ Page({
   },
 
   onSelectType(event) {
-    const creatingType = !this.data.editing && event.currentTarget.dataset.action === 'create';
+    const creatingType = event.currentTarget.dataset.action === 'create';
     if (creatingType) {
       this.setData({
         creatingType: true,

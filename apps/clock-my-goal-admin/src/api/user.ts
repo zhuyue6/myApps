@@ -7,13 +7,13 @@ export function getUserList(data: {
   pageNum: number
   pageSize: number
 }) {
-  return postData<MiniUserPage>('/admin/getUserList', data)
+  return getData<MiniUserPage>('/admin/users', data)
 }
 
 export function getUser(id: number) {
-  return getData<MiniUserDetail>(`/admin/getUserInfo/${id}`)
+  return getData<MiniUserDetail>(`/admin/users/${id}`)
 }
 
 export function updateUserStatus(id: number, status: 0 | 1) {
-  return postData<null>('/admin/updateUserStatus', { id, status })
+  return postData<null>(`/admin/users/${id}/status`, { status })
 }

@@ -1,9 +1,14 @@
 <view class="page with-tab">
   <block wx:if="{{loggedIn}}">
     <view class="profile">
-      <view class="avatar">
-        <image wx:if="{{avatarUrl}}" class="avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
-        <van-icon wx:else name="contact" size="40px" color="#5a8fc7" />
+      <view class="avatar-wrap" hover-class="avatar-hover" bindtap="onChooseAvatar" aria-role="button" aria-label="更换头像">
+        <view class="avatar">
+          <image wx:if="{{avatarUrl}}" class="avatar-img" src="{{avatarUrl}}" mode="aspectFill" binderror="onAvatarError" />
+          <van-icon wx:else name="contact" size="40px" color="#5a8fc7" />
+        </view>
+        <view class="avatar-camera">
+          <van-icon name="photograph" size="14px" color="#ffffff" />
+        </view>
       </view>
       <view class="nick">
         <text>{{nickname}}</text>
@@ -22,7 +27,7 @@
           <text class="stat-label">已过期</text>
         </view>
       </view>
-      <view class="note">数量按接口返回的目标状态统计。头像暂用默认图，修改昵称的接口还没有。</view>
+      <view class="note">数量按接口返回的目标状态统计。点击头像可以拍照或从相册更换，没有头像时显示默认头像。修改昵称的接口还没有。</view>
       <button class="btn logout" hover-class="btn-hover" bindtap="onLogout">退出登录</button>
     </view>
   </block>

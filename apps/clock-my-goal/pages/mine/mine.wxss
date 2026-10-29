@@ -3,16 +3,43 @@
   text-align: center;
 }
 
+.avatar-wrap {
+  position: relative;
+  width: 152rpx;
+  height: 152rpx;
+  margin: 0 auto 20rpx;
+}
+
 .avatar {
   width: 152rpx;
   height: 152rpx;
   border-radius: 50%;
-  margin: 0 auto 20rpx;
+  overflow: hidden;
   background: linear-gradient(180deg, #d7e9f8, #c5daf0);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: inset 0 0 0 6rpx #ffffff;
+}
+
+.avatar-hover {
+  opacity: 0.86;
+}
+
+.avatar-camera {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: #5a8fc7;
+  border: 4rpx solid #ffffff;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(40, 70, 100, 0.16);
 }
 
 .nick {

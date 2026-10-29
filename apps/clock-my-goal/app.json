@@ -33,6 +33,11 @@
       }
     ]
   },
+  "permission": {
+    "scope.camera": {
+      "desc": "用于拍摄并上传头像"
+    }
+  },
   "window": {
     "navigationBarTitleText": "目标打卡",
     "navigationBarBackgroundColor": "#E8F4FC",

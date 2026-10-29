@@ -32,7 +32,7 @@ function unwrap<T>(body: unknown): T {
   if (!payload || typeof payload.code !== 'number') {
     throw new Error('服务暂不可用')
   }
-  if (payload.code === 10004 || payload.code === 10005) {
+  if (payload.code === 10004 || payload.code === 10005 || payload.code === 15001) {
     onUnauthorized()
     throw new Error(payload.message || '请先登录')
   }

@@ -1,6 +1,6 @@
 /**
  * 页面只调用本模块。
- * 计划、标签走 clock-in-app。状态使用接口返回的 status（1 进行中 / 2 已完成 / 3 已过期）。
+ * 计划、标签走后端 REST。状态使用接口返回的 status（1 进行中 / 2 已完成 / 3 已过期）。
  * 目标次数由服务端按周期与截止时间计算，创建/更新不再提交。
  */
 const planUtil = require('../utils/plan');
@@ -132,8 +132,10 @@ function saveTag(input) {
     if (Object.keys(checked.errors).length) {
       return { ok: false, errors: checked.errors };
     }
-    if (key) return Promise.reject(new Error('暂不支持修改标签'));
-    return backend.createLabel(checked.value.name, checked.value.type).then(() => ({ ok: true }));
+    const saved = key
+      ? backend.updateLabel(toNumberId(key), checked.value.name, checked.value.type)
+      : backend.createLabel(checked.value.name, checked.value.type);
+    return saved.then(() => ({ ok: true }));
   });
 }
 
@@ -143,24 +145,30 @@ function removeTag(id) {
 
 function getProfile() {
   const session = backend.getSession();
-  if (!session.token) {
+  const cached = session.user || {};
+  if (!session.token || !cached.id) {
     return Promise.resolve({
       loggedIn: false,
       nickname: '',
+      avatarUrl: '',
       ongoing: 0,
       completed: 0,
       expired: 0,
     });
   }
-  const user = session.user || {};
-  return backend.getGoals().then((goals) => {
+  return Promise.all([backend.getUser(cached.id), backend.getGoals()]).then(([user, goals]) => {
+    const profileUser = user || cached;
+    const avatarPath = profileUser.avatarUrl || '';
+    backend.patchSessionUser({
+      avatarUrl: avatarPath,
+      userName: profileUser.userName || cached.userName || '',
+    });
     const plans = (goals || []).map((goal) => mapGoal(goal, []));
     const counts = planUtil.summarize(plans);
-    const avatarUrl = user.avatarUrl || '';
     return {
       loggedIn: true,
-      nickname: user.userName || '已登录',
-      avatarUrl: /^https?:\/\//.test(avatarUrl) ? avatarUrl : '',
+      nickname: profileUser.userName || cached.userName || '已登录',
+      avatarUrl: backend.resolveAvatarUrl(avatarPath),
       ongoing: counts.ongoing,
       completed: counts.completed,
       expired: counts.expired,

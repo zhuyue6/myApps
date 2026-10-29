@@ -2,10 +2,6 @@
   padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
 }
 
-.top-help {
-  padding-top: 8rpx;
-}
-
 .ph {
   color: #b4bec8;
 }
