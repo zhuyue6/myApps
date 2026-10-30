@@ -1,7 +1,8 @@
-<view class="page with-action">
+<view class="page {{readonly ? '' : 'with-action'}}">
+  <view class="banner" wx:if="{{readonly}}">已完成，仅可查看</view>
   <view class="group">
-    <view class="cell">
-      <view class="label">名称<text class="req">*</text></view>
+    <view class="cell {{readonly ? 'readonly' : ''}}">
+      <view class="label">名称<text class="req" wx:if="{{!readonly}}">*</text></view>
       <input
         class="field"
         value="{{form.name}}"
@@ -9,19 +10,20 @@
         placeholder-class="ph"
         bindinput="onName"
         cursor-spacing="80"
+        disabled="{{readonly}}"
       />
     </view>
     <view class="err" wx:if="{{errors.name}}">{{errors.name}}</view>
 
-    <view class="cell" bindtap="onOpenTime">
-      <view class="label">计划截止时间<text class="req">*</text></view>
+    <view class="cell {{readonly ? 'readonly' : ''}}" bindtap="onOpenTime">
+      <view class="label">计划截止时间<text class="req" wx:if="{{!readonly}}">*</text></view>
       <view class="val {{form.deadline ? '' : 'ph'}}">{{form.deadline || '请选择'}}</view>
-      <text class="chev">›</text>
+      <text class="chev" wx:if="{{!readonly}}">›</text>
     </view>
     <view class="err" wx:if="{{errors.deadline}}">{{errors.deadline}}</view>
 
-    <view class="cell no-line">
-      <view class="label">周期<text class="req">*</text></view>
+    <view class="cell no-line {{readonly ? 'readonly' : ''}}">
+      <view class="label">周期<text class="req" wx:if="{{!readonly}}">*</text></view>
     </view>
     <view class="seg">
       <button
@@ -30,23 +32,24 @@
         wx:key="value"
         data-value="{{item.value}}"
         bindtap="onCycle"
-        hover-class="btn-hover"
+        hover-class="{{readonly ? '' : 'btn-hover'}}"
+        disabled="{{readonly}}"
       >{{item.label}}</button>
     </view>
     <view class="help" wx:if="{{!errors.cycle}}">目标次数由系统根据周期和截止时间自动计算</view>
     <view class="err" wx:if="{{errors.cycle}}">{{errors.cycle}}</view>
 
-    <view class="cell" bindtap="onOpenTag">
-      <view class="label">标签<text class="opt">选填</text></view>
+    <view class="cell {{readonly ? 'readonly' : ''}}" bindtap="onOpenTag">
+      <view class="label">标签<text class="opt" wx:if="{{!readonly}}">选填</text></view>
       <view class="val {{form.tagId ? '' : 'ph'}}">{{form.tagId ? tagText : '可不选'}}</view>
-      <text class="chev">›</text>
+      <text class="chev" wx:if="{{!readonly}}">›</text>
     </view>
     <view class="err" wx:if="{{errors.tag}}">{{errors.tag}}</view>
 
-    <view class="cell remark-cell no-line">
+    <view class="cell remark-cell no-line {{readonly ? 'readonly' : ''}}">
       <view class="remark-head">
-        <view class="label">备注<text class="opt">选填</text></view>
-        <text class="remark-count">{{remarkLen}}/500</text>
+        <view class="label">备注<text class="opt" wx:if="{{!readonly}}">选填</text></view>
+        <text class="remark-count" wx:if="{{!readonly}}">{{remarkLen}}/500</text>
       </view>
       <textarea
         class="remark-input"
@@ -58,6 +61,7 @@
         auto-height
         cursor-spacing="120"
         show-confirm-bar="{{false}}"
+        disabled="{{readonly}}"
       />
     </view>
     <view class="err" wx:if="{{errors.remark}}">{{errors.remark}}</view>
@@ -87,7 +91,7 @@
   </block>
 </view>
 
-<view class="action-bar solo">
+<view class="action-bar solo" wx:if="{{!readonly}}">
   <button class="btn" hover-class="btn-hover" bindtap="onSave">保存</button>
 </view>
 

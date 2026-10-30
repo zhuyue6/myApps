@@ -78,6 +78,9 @@ function savePlan(input) {
   const currentGoal = key ? backend.getGoal(toNumberId(key)) : Promise.resolve(null);
   return Promise.all([loadTags(), currentGoal]).then(([tags, current]) => {
     if (key && !current) return Promise.reject(new Error('计划不存在'));
+    if (current && STATUS_FROM_API[Number(current.status)] === 'completed') {
+      return Promise.reject(new Error('已完成的目标不能修改'));
+    }
     const checked = planUtil.validatePlan(input, tags);
     if (Object.keys(checked.errors).length) {
       return { ok: false, errors: checked.errors };

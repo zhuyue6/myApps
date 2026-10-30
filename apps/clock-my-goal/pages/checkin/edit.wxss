@@ -37,3 +37,18 @@
   color: #1c2834;
   box-sizing: border-box;
 }
+
+.field[disabled],
+.remark-input[disabled] {
+  color: #5f6d7c;
+  background: transparent;
+}
+
+button.seg-btn[disabled] {
+  opacity: 1;
+}
+
+button.seg-btn[disabled].on {
+  background: #5a8fc7;
+  color: #ffffff;
+}
