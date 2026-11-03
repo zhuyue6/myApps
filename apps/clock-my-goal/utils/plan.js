@@ -29,6 +29,9 @@ const STATUS_HELP = {
 };
 
 const DEFAULT_NICKNAME = '打卡用户';
+const CYCLE_COUNT_MAX = 999;
+const ALL_DAY_START = '00:00:00';
+const ALL_DAY_END = '23:59:59';
 
 function percentOf(plan) {
   const checked = Number(plan.checkedCount) || 0;
@@ -55,8 +58,18 @@ function decorate(plan, tags) {
   };
 }
 
+function isAllDay(start, end) {
+  return (!start && !end) || (start === ALL_DAY_START && end === ALL_DAY_END);
+}
+
+function normalizeCycleCount(value) {
+  const count = Number(value);
+  if (!Number.isInteger(count)) return 0;
+  return count;
+}
+
 /**
- * @param {{name?:string,remark?:string,deadline?:string,cycle?:string,tagId?:string}} input
+ * @param {{name?:string,remark?:string,deadline?:string,cycle?:string,tagId?:string,cycleCount?:number,checkStart?:string,checkEnd?:string}} input
  * @param {{id:string}[]} tags
  */
 function validatePlan(input, tags) {
@@ -67,6 +80,21 @@ function validatePlan(input, tags) {
   if (remark.length > 500) errors.remark = '备注不能超过500字';
   if (!datetime.parseDateTime(input.deadline)) errors.deadline = '请选择截止时间';
   if (!CYCLE_TEXT[input.cycle]) errors.cycle = '请选择周期';
+  const cycleCount = normalizeCycleCount(input.cycleCount);
+  if (cycleCount < 1 || cycleCount > CYCLE_COUNT_MAX) {
+    errors.cycleCount = `请填写 1 到 ${CYCLE_COUNT_MAX} 的单次周期打卡总数`;
+  }
+  const rawStart = String(input.checkStart || '').trim();
+  const rawEnd = String(input.checkEnd || '').trim();
+  const checkStart = datetime.parseClock(rawStart);
+  const checkEnd = datetime.parseClock(rawEnd);
+  if ((rawStart && !checkStart) || (rawEnd && !checkEnd)) {
+    errors.checkTime = '请选择有效的打卡时间';
+  } else if (!!rawStart !== !!rawEnd) {
+    errors.checkTime = '请同时填写开始和结束时间，或留空表示全天';
+  } else if (checkStart && checkEnd && checkStart >= checkEnd) {
+    errors.checkTime = '开始时间须早于结束时间';
+  }
   const tagId = input.tagId || '';
   if (tagId && !(tags || []).some((item) => item.id === tagId)) {
     errors.tag = '请重新选择标签';
@@ -79,6 +107,9 @@ function validatePlan(input, tags) {
       deadline: input.deadline || '',
       cycle: input.cycle || '',
       tagId,
+      cycleCount,
+      checkStart,
+      checkEnd,
     },
   };
 }
@@ -117,6 +148,10 @@ module.exports = {
   STATUS_TEXT,
   STATUS_HELP,
   DEFAULT_NICKNAME,
+  CYCLE_COUNT_MAX,
+  ALL_DAY_START,
+  ALL_DAY_END,
+  isAllDay,
   percentOf,
   decorate,
   validatePlan,

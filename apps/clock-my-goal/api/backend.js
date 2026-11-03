@@ -5,8 +5,10 @@
  * 标签：POST /labels  PATCH /labels/{id}  DELETE /labels/{id}  GET /labels  GET /labels/{id}
  * 目标：POST /goals  PATCH /goals/{id}  GET /goals  GET /goals/{id}  DELETE /goals/{id}  POST /goals/{id}/clockIn
  *
- * create/update 请求字段：goalName、remark、expirationTime、labelId、clockInCycle
+ * create/update 请求字段：goalName、remark、expirationTime、labelId、clockInCycle、
+ * startCheckTime、endCheckTime、targetClockInCycleCount
  * targetClockInCount 由服务端按周期与截止时间计算，客户端不再提交。
+ * 打卡时间段两端都为空时，新建按全天处理；修改时显式提交 00:00:00 至 23:59:59，避免空值被当成不修改。
  * 目标列表返回 status：1 进行中 / 2 已完成 / 3 已过期，客户端不再自行判断。
  */
 const config = require('./config');
@@ -172,6 +174,9 @@ function goalBody(payload) {
     expirationTime: payload.expirationTime,
     labelId: payload.labelId == null || payload.labelId === '' ? null : payload.labelId,
     clockInCycle: payload.clockInCycle,
+    startCheckTime: payload.startCheckTime || null,
+    endCheckTime: payload.endCheckTime || null,
+    targetClockInCycleCount: payload.targetClockInCycleCount,
   };
 }
 

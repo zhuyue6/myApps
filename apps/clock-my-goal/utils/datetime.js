@@ -112,6 +112,41 @@ function completeDay(values, edge) {
   return joinDay(values, edge === 'start' ? DAY_START : DAY_END);
 }
 
+function parseClock(str) {
+  const matched = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/.exec(String(str || '').trim());
+  if (!matched) return '';
+  const hour = Number(matched[1]);
+  const minute = Number(matched[2]);
+  const second = Number(matched[3]);
+  if (hour > 23 || minute > 59 || second > 59) return '';
+  return `${pad(hour)}:${pad(minute)}:${pad(second)}`;
+}
+
+function buildTimeColumns(clock) {
+  const normalized = parseClock(clock) || '08:00:00';
+  const parts = normalized.split(':');
+  const lists = [range(0, 23), range(0, 59), range(0, 59)];
+  const columns = lists.map((list, index) => ({
+    values: list,
+    defaultIndex: Math.max(0, list.indexOf(parts[index])),
+  }));
+  return { columns, values: parts };
+}
+
+function formatClock(values) {
+  const hour = columnNumber(values && values[0]);
+  const minute = columnNumber(values && values[1]);
+  const second = columnNumber(values && values[2]);
+  if (
+    !Number.isInteger(hour) || hour < 0 || hour > 23 ||
+    !Number.isInteger(minute) || minute < 0 || minute > 59 ||
+    !Number.isInteger(second) || second < 0 || second > 59
+  ) {
+    return '';
+  }
+  return `${pad(hour)}:${pad(minute)}:${pad(second)}`;
+}
+
 function startOfDay(input) {
   const parts = dateParts(input == null ? new Date() : input);
   return parts ? joinDay(parts, DAY_START) : '';
@@ -135,6 +170,9 @@ module.exports = {
   completeDay,
   startOfDay,
   endOfDay,
+  parseClock,
+  buildTimeColumns,
+  formatClock,
   DAY_START,
   DAY_END,
 };

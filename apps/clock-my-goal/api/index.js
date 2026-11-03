@@ -2,6 +2,7 @@
  * 页面只调用本模块。
  * 计划、标签走后端 REST。状态使用接口返回的 status（1 进行中 / 2 已完成 / 3 已过期）。
  * 目标次数由服务端按周期与截止时间计算，创建/更新不再提交。
+ * 打卡时间段、单次周期打卡总数随创建和修改一起提交。
  */
 const planUtil = require('../utils/plan');
 const datetime = require('../utils/datetime');
@@ -34,6 +35,10 @@ function mapGoal(goal, tags) {
   const tag = named
     ? (tags || []).find((item) => item.type === (goal.labelType || '') && item.name === (goal.labelName || ''))
     : null;
+  const checkStart = goal.startCheckTime || '';
+  const checkEnd = goal.endCheckTime || '';
+  const allDay = planUtil.isAllDay(checkStart, checkEnd);
+  const cycleCount = Number(goal.targetClockInCycleCount);
   return {
     id: asId(goal.id),
     name: goal.goalName || '',
@@ -42,6 +47,10 @@ function mapGoal(goal, tags) {
     cycle: CYCLE_FROM_API[goal.clockInCycle] || '',
     targetCount: goal.targetClockInCount || 0,
     checkedCount: goal.clockInCount || 0,
+    cycleCount: Number.isInteger(cycleCount) && cycleCount > 0 ? cycleCount : 1,
+    cycleChecked: goal.clockInCycleCount || 0,
+    checkStart: allDay ? '' : checkStart,
+    checkEnd: allDay ? '' : checkEnd,
     tagId: tag ? tag.id : '',
     createdAt: goal.createTime || '',
     status: STATUS_FROM_API[Number(goal.status)] || '',
@@ -86,12 +95,16 @@ function savePlan(input) {
       return { ok: false, errors: checked.errors };
     }
     const value = checked.value;
+    const allDay = planUtil.isAllDay(value.checkStart, value.checkEnd);
     const payload = {
       goalName: value.name,
       remark: value.remark,
       expirationTime: datetime.endOfDay(value.deadline),
       labelId: value.tagId ? toNumberId(value.tagId) : null,
       clockInCycle: CYCLE_TO_API[value.cycle],
+      targetClockInCycleCount: value.cycleCount,
+      startCheckTime: allDay ? (current ? planUtil.ALL_DAY_START : null) : value.checkStart,
+      endCheckTime: allDay ? (current ? planUtil.ALL_DAY_END : null) : value.checkEnd,
     };
     const saved = current
       ? backend.updateGoal(Object.assign({ id: toNumberId(current.id) }, payload))

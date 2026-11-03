@@ -39,6 +39,55 @@
     <view class="help" wx:if="{{!errors.cycle}}">目标次数由系统根据周期和截止时间自动计算</view>
     <view class="err" wx:if="{{errors.cycle}}">{{errors.cycle}}</view>
 
+    <view class="cell count-cell {{readonly ? 'readonly' : ''}}">
+      <view class="label">单次周期打卡总数<text class="req" wx:if="{{!readonly}}">*</text></view>
+      <view class="stepper">
+        <button
+          class="step"
+          hover-class="{{readonly ? '' : 'btn-hover'}}"
+          data-delta="-1"
+          bindtap="onCycleCount"
+          disabled="{{readonly || form.cycleCount <= 1}}"
+        >－</button>
+        <input
+          class="step-input"
+          type="number"
+          value="{{form.cycleCount}}"
+          maxlength="3"
+          bindinput="onCycleCountInput"
+          bindblur="onCycleCountBlur"
+          disabled="{{readonly}}"
+          cursor-spacing="80"
+        />
+        <button
+          class="step"
+          hover-class="{{readonly ? '' : 'btn-hover'}}"
+          data-delta="1"
+          bindtap="onCycleCount"
+          disabled="{{readonly || form.cycleCount >= cycleCountMax}}"
+        >＋</button>
+      </view>
+    </view>
+    <view class="help" wx:if="{{!errors.cycleCount && mode === 'edit'}}">每个周期内需要完成的打卡次数。修改后会清空已打卡次数</view>
+    <view class="help" wx:if="{{!errors.cycleCount && mode !== 'edit'}}">每个周期内需要完成的打卡次数</view>
+    <view class="err" wx:if="{{errors.cycleCount}}">{{errors.cycleCount}}</view>
+
+    <view class="cell {{readonly ? 'readonly' : ''}}" bindtap="onOpenCheckTime" data-edge="start">
+      <view class="label">开始时间<text class="opt" wx:if="{{!readonly}}">选填</text></view>
+      <view class="val {{form.checkStart ? '' : 'ph'}}">{{form.checkStart || (form.checkEnd ? '请选择' : '全天')}}</view>
+      <text class="chev" wx:if="{{!readonly}}">›</text>
+    </view>
+    <view class="cell {{readonly ? 'readonly' : ''}}" bindtap="onOpenCheckTime" data-edge="end">
+      <view class="label">结束时间<text class="opt" wx:if="{{!readonly}}">选填</text></view>
+      <view class="val {{form.checkEnd ? '' : 'ph'}}">{{form.checkEnd || (form.checkStart ? '请选择' : '全天')}}</view>
+      <text class="chev" wx:if="{{!readonly}}">›</text>
+    </view>
+    <view class="help" wx:if="{{!errors.checkTime}}">不填表示全天可打卡。开始时间须早于结束时间</view>
+    <view class="err" wx:if="{{errors.checkTime}}">{{errors.checkTime}}</view>
+    <view class="help" wx:if="{{!readonly && (form.checkStart || form.checkEnd)}}">
+      <text class="time-clear" bindtap="onClearCheckTime">改为全天</text>
+    </view>
+
     <view class="cell {{readonly ? 'readonly' : ''}}" bindtap="onOpenTag">
       <view class="label">标签<text class="opt" wx:if="{{!readonly}}">选填</text></view>
       <view class="val {{form.tagId ? '' : 'ph'}}">{{form.tagId ? tagText : '可不选'}}</view>
@@ -79,6 +128,10 @@
         <view class="val">{{checkedCount}}</view>
       </view>
       <view class="cell readonly">
+        <view class="label">本周期已打卡</view>
+        <view class="val">{{cycleChecked}}</view>
+      </view>
+      <view class="cell readonly">
         <view class="label">创建时间</view>
         <view class="val">{{createdAt}}</view>
       </view>
@@ -112,6 +165,26 @@
       visible-item-count="{{5}}"
       item-height="{{44}}"
       bind:change="onTimeChange"
+    />
+  </view>
+</van-popup>
+
+<van-popup show="{{showClock}}" position="bottom" round z-index="{{200}}" bind:close="onCloseClock">
+  <view class="sheet" catchtouchmove="noop">
+    <view class="sheet-head">
+      <text class="sheet-btn" bindtap="onCloseClock">取消</text>
+      <text class="sheet-title">{{clockTitle}}</text>
+      <text class="sheet-btn ok" bindtap="onClockConfirm">确定</text>
+    </view>
+    <view class="col-labels">
+      <text>时</text><text>分</text><text>秒</text>
+    </view>
+    <van-picker
+      id="clockPicker"
+      wx:if="{{showClock}}"
+      columns="{{clockColumns}}"
+      visible-item-count="{{5}}"
+      item-height="{{44}}"
     />
   </view>
 </van-popup>

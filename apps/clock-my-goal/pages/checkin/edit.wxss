@@ -52,3 +52,59 @@ button.seg-btn[disabled].on {
   background: #5a8fc7;
   color: #ffffff;
 }
+
+.count-cell .label {
+  width: auto;
+  flex: 1;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+button.step {
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 60rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 16rpx;
+  background: #f3f6fa;
+  color: #1c2834;
+  font-size: 36rpx;
+  text-align: center;
+}
+
+button.step::after {
+  border: none;
+}
+
+button.step[disabled] {
+  color: #c5ced6;
+  background: #f3f6fa;
+}
+
+.step-input {
+  width: 88rpx;
+  height: 64rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 16rpx;
+  background: #f3f6fa;
+  color: #1c2834;
+  font-size: 30rpx;
+  font-weight: 600;
+  text-align: center;
+}
+
+.step-input[disabled] {
+  color: #5f6d7c;
+  background: #f3f6fa;
+}
+
+.time-clear {
+  color: #5a8fc7;
+}
