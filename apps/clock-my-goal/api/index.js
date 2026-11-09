@@ -3,6 +3,7 @@
  * 计划、标签走后端 REST。状态使用接口返回的 status（1 进行中 / 2 已完成 / 3 已过期）。
  * 目标次数由服务端按周期与截止时间计算，创建/更新不再提交。
  * 打卡时间段、单次周期打卡总数随创建和修改一起提交。
+ * 目标详情的 clockInList 是当前周期打卡流水，仅含 id 与 clockInTime，按时间从新到旧。
  */
 const planUtil = require('../utils/plan');
 const datetime = require('../utils/datetime');
@@ -30,6 +31,22 @@ function mapTag(label) {
   };
 }
 
+function mapClockIns(list) {
+  const items = (Array.isArray(list) ? list : [])
+    .map((item) => ({
+      id: asId(item && item.id),
+      time: (item && item.clockInTime) || '',
+    }))
+    .filter((item) => item.time);
+  const total = items.length;
+  return items.map((item, index) => ({
+    id: item.id || String(index),
+    time: item.time,
+    label: `第 ${total - index} 次`,
+    latest: index === 0,
+  }));
+}
+
 function mapGoal(goal, tags) {
   const named = !!(goal.labelName || goal.labelType);
   const tag = named
@@ -54,6 +71,7 @@ function mapGoal(goal, tags) {
     tagId: tag ? tag.id : '',
     createdAt: goal.createTime || '',
     status: STATUS_FROM_API[Number(goal.status)] || '',
+    clockIns: mapClockIns(goal.clockInList),
   };
 }
 

@@ -141,6 +141,23 @@
       </view>
     </view>
     <view class="help">{{statusHelp}}</view>
+
+    <view class="sec">打卡流水</view>
+    <view class="group" wx:if="{{clockIns.length}}">
+      <view class="cell readonly" wx:for="{{clockIns}}" wx:key="id">
+        <view class="label flow-label">
+          <text>{{item.label}}</text>
+          <text class="flow-latest" wx:if="{{item.latest}}">最近</text>
+        </view>
+        <view class="val">{{item.time}}</view>
+      </view>
+    </view>
+    <view class="group" wx:else>
+      <view class="cell readonly no-line">
+        <view class="flow-empty">本周期还没有打卡</view>
+      </view>
+    </view>
+    <view class="help">只展示当前周期内的打卡时间，最近一次在最上面</view>
   </block>
 </view>
 

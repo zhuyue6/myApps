@@ -108,3 +108,27 @@ button.step[disabled] {
 .time-clear {
   color: #5a8fc7;
 }
+
+.flow-label {
+  width: auto;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.flow-latest {
+  font-size: 22rpx;
+  line-height: 36rpx;
+  padding: 0 12rpx;
+  border-radius: 16rpx;
+  color: #3f74ad;
+  background: #e8f3fb;
+  font-weight: 600;
+}
+
+.flow-empty {
+  width: 100%;
+  text-align: center;
+  color: #8b98a8;
+  font-size: 28rpx;
+}
